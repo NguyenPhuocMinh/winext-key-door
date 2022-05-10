@@ -1,0 +1,26 @@
+{
+  "name": "winext-key-store",
+  "version": "1.0.0",
+  "description": "Manager role and permissions with keycloak open source",
+  "homepage": "https://github.com/NguyenPhuocMinh/winext-key-store",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "winext",
+    "keycloak"
+  ],
+  "author": "Minh Nguyễn",
+  "license": "ISC",
+  "dependencies": {
+    "winext": "git+https://github.com/NguyenPhuocMinh/winext.git#37ffc7f5db474503d55625387b531d490df7ff1a"
+  },
+  "devDependencies": {
+    "eslint": "^7.29.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0"
+  }
+}
