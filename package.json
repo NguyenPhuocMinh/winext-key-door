@@ -1,7 +1,7 @@
 {
   "name": "winext-key-store",
   "version": "1.0.0",
-  "description": "Manager role and permissions with keycloak open source",
+  "description": "Manager role and permissions with supper admin page",
   "homepage": "https://github.com/NguyenPhuocMinh/winext-key-store",
   "main": "index.js",
   "scripts": {

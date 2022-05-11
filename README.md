@@ -6,6 +6,8 @@
 ├── README.md
 ├── index.js
 ├── lib
-│   └── keystore.js
+│   └── key-manager.js
+├── middleware
 ├── package.json
+├── supports
 ```
