@@ -6,6 +6,6 @@
 ├── README.md
 ├── index.js
 ├── lib
-│   └── keydoor.js
+│   └── keystore.js
 ├── package.json
 ```

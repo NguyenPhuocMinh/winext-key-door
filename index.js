@@ -1,1 +1,1 @@
-module.exports = require('./lib/keydoor');
+module.exports = require('./lib/keystore');
