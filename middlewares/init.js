@@ -10,16 +10,12 @@ function Init(params = {}) {
   const loggerFactory = get(params, 'loggerFactory');
   const loggerTracer = get(params, 'loggerTracer');
 
-  this.config = function (opts = {}) {
-    const { next } = opts;
-
-    return next();
+  this.config = function (request, response, next) {
+    next();
   };
 
-  this.postAdmin = async function (opts = {}) {
-    const { next } = opts;
-
-    return next();
+  this.postAdmin = async function (request, response, next) {
+    next();
   };
 }
 

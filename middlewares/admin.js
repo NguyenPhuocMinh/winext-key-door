@@ -9,15 +9,11 @@ function Admin(params = {}) {
   const loggerFactory = get(params, 'loggerFactory');
   const loggerTracer = get(params, 'loggerTracer');
 
-  this.login = async function (opts = {}) {
-    const { next } = opts;
-
+  this.loginAdmin = async function (request, response, next) {
     return next();
   };
 
-  this.logout = async function (opts = {}) {
-    const { next } = opts;
-
+  this.logoutAdmin = async function (request, response, next) {
     return next();
   };
 }
