@@ -1,21 +1,22 @@
 'use strict';
 
 const winext = require('winext');
+const lodash = require('lodash');
 const dataSequelizeStore = winext.require('winext-repo-store').dataSequelizeStore;
-const lodash = winext.require('lodash');
 const chalk = winext.require('chalk');
-const dotenv = winext.require('dotenv');
-const path = require('path');
 const parseSlug = winext.parseSlug;
+const path = require('path');
+const fs = require('fs');
 const generatePassword = require('../utils/generatePassword');
-const { get } = lodash;
-
-dotenv.config();
 
 function Init(params = {}) {
   const { app, router, loggerFactory, loggerTracer } = params;
 
-  const configure = path.join(process.cwd(), 'keyManager.json');
+  const configurePath = path.join(process.cwd(), 'keyManager.json');
+  if (!configurePath) {
+    throw new Error('Not found configure keyManager.json!');
+  }
+  const configure = this.loadConfiguration(configurePath);
 
   loggerTracer.info(chalk.green.bold(`Start func Init key manager successfully!`));
 
@@ -48,5 +49,12 @@ function Init(params = {}) {
     next();
   };
 }
+
+Init.prototype.loadConfiguration = (configPath) => {
+  const json = fs.readFileSync(configPath);
+  const configure = JSON.parse(json.toString());
+
+  return configure;
+};
 
 module.exports = Init;
