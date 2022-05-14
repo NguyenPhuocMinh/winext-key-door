@@ -1,12 +1,11 @@
 'use strict';
 
 function Users(params = {}) {
-  this.createUser = async function (opts) {
-    const { next } = opts;
+  const { app, router, loggerFactory, loggerTracer } = params;
 
-    return next();
+  return (request, response, next) => {
+    next();
   };
 }
 
-exports = module.exports = new Users();
-exports.register = Users;
+module.exports = Users;

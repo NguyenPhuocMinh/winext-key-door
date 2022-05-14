@@ -1,12 +1,11 @@
 'use strict';
 
 function Roles(params = {}) {
-  this.createRole = async function (opts) {
-    const { next } = opts;
+  const { app, router, loggerFactory, loggerTracer } = params;
 
-    return next();
+  return (request, response, next) => {
+    next();
   };
 }
 
-exports = module.exports = new Roles();
-exports.register = Roles;
+module.exports = Roles;

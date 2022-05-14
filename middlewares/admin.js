@@ -5,18 +5,11 @@ const lodash = winext.require('lodash');
 const { get } = lodash;
 
 function Admin(params = {}) {
-  const requestId = get(params, 'requestId');
-  const loggerFactory = get(params, 'loggerFactory');
-  const loggerTracer = get(params, 'loggerTracer');
+  const { app, router, loggerFactory, loggerTracer } = params;
 
-  this.loginAdmin = async function (request, response, next) {
-    return next();
-  };
-
-  this.logoutAdmin = async function (request, response, next) {
-    return next();
+  return (request, response, next) => {
+    next();
   };
 }
 
-exports = module.exports = new Admin();
-exports.register = Admin;
+module.exports = Admin;

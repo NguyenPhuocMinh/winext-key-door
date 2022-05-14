@@ -1,12 +1,11 @@
 'use strict';
 
 function Realms(params = {}) {
-  this.createRealm = async function (opts) {
-    const { next } = opts;
+  const { app, router, loggerFactory, loggerTracer } = params;
 
-    return next();
+  return (request, response, next) => {
+    next();
   };
 }
 
-exports = module.exports = new Realms();
-exports.register = Realms;
+module.exports = Realms;

@@ -1,12 +1,11 @@
 'use strict';
 
 function Groups(params = {}) {
-  this.createGroups = async function (opts) {
-    const { next } = opts;
+  const { app, router, loggerFactory, loggerTracer } = params;
 
-    return next();
+  return (request, response, next) => {
+    next();
   };
 }
 
-exports = module.exports = new Groups();
-exports.register = Groups;
+module.exports = Groups;

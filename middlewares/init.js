@@ -1,23 +1,52 @@
 'use strict';
 
 const winext = require('winext');
-const Promise = winext.require('bluebird');
+const dataSequelizeStore = winext.require('winext-repo-store').dataSequelizeStore;
 const lodash = winext.require('lodash');
+const chalk = winext.require('chalk');
+const dotenv = winext.require('dotenv');
+const path = require('path');
+const parseSlug = winext.parseSlug;
+const generatePassword = require('../utils/generatePassword');
 const { get } = lodash;
 
+dotenv.config();
+
 function Init(params = {}) {
-  const requestId = get(params, 'requestId');
-  const loggerFactory = get(params, 'loggerFactory');
-  const loggerTracer = get(params, 'loggerTracer');
+  const { app, router, loggerFactory, loggerTracer } = params;
 
-  this.config = function (request, response, next) {
-    next();
-  };
+  const configure = path.join(process.cwd(), 'keyManager.json');
 
-  this.postAdmin = async function (request, response, next) {
+  loggerTracer.info(chalk.green.bold(`Start func Init key manager successfully!`));
+
+  return async (request, response, next) => {
+    const { requestID } = request;
+
+    loggerFactory.warn(`function Init has been start`, {
+      requestId: `${requestID}`,
+    });
+
+    // create supper admin
+    const [user, created] = await dataSequelizeStore.findCreate({
+      type: 'UserModel',
+      options: {
+        where: {
+          userName: configure.admin.userName,
+          slug: parseSlug(configure.admin.userName),
+          deleted: false,
+        },
+        defaults: {
+          userName: configure.admin.userName,
+          password: generatePassword(configure.admin.password),
+          slug: parseSlug(configure.admin.userName),
+        },
+      },
+    });
+    console.log('🚀 ~ file: init.js ~ line 45 ~ return ~ user', user);
+    console.log('🚀 ~ file: init.js ~ line 31 ~ return ~ created', created);
+
     next();
   };
 }
 
-exports = module.exports = new Init();
-exports.register = Init;
+module.exports = Init;

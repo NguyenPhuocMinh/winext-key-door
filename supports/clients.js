@@ -1,12 +1,11 @@
 'use strict';
 
 function Clients(params = {}) {
-  this.createClient = async function (opts) {
-    const { next } = opts;
+  const { app, router, loggerFactory, loggerTracer } = params;
 
-    return next();
+  return (request, response, next) => {
+    next();
   };
 }
 
-exports = module.exports = new Clients();
-exports.register = Clients;
+module.exports = Clients;

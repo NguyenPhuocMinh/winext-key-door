@@ -1,14 +1,5 @@
 'use strict';
 
-const defaultPaths = [
-  {
-    method: 'POST',
-    path: '/realms',
-  },
-  {
-    method: 'GET',
-    path: '/realms',
-  },
-];
+const defaultPaths = '/auth';
 
-module.exports = defaultPaths;
+module.exports = { defaultPaths };
