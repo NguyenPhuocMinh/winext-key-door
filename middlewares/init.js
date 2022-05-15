@@ -1,12 +1,14 @@
 'use strict';
 
+const path = require('path');
 const winext = require('winext');
 const lodash = require('lodash');
-const dataSequelizeStore = winext.require('winext-repo-store').dataSequelizeStore;
 const chalk = winext.require('chalk');
+const dataSequelizeStore = winext.require('winext-repo-store').dataSequelizeStore;
+const errorManager = winext.require('winext-error-manager');
 const parseSlug = winext.parseSlug;
-const path = require('path');
-const fs = require('fs');
+const errorCodes = require('../config/errorCodes');
+const loadConfiguration = require('../utils/loadConfiguration');
 const generatePassword = require('../utils/generatePassword');
 
 function Init(params = {}) {
@@ -14,9 +16,9 @@ function Init(params = {}) {
 
   const configurePath = path.join(process.cwd(), 'keyManager.json');
   if (!configurePath) {
-    throw new Error('Not found configure keyManager.json!');
+    throw errorManager.newError('NotFoundConfigKeyManagerJSON', errorCodes);
   }
-  const configure = this.loadConfiguration(configurePath);
+  const configure = loadConfiguration(configurePath);
 
   loggerTracer.info(chalk.green.bold(`Start func Init key manager successfully!`));
 
@@ -29,7 +31,7 @@ function Init(params = {}) {
 
     // create supper admin
     const [user, created] = await dataSequelizeStore.findCreate({
-      type: 'UserModel',
+      type: 'SupperAdminModel',
       options: {
         where: {
           userName: configure.admin.userName,
@@ -49,12 +51,5 @@ function Init(params = {}) {
     next();
   };
 }
-
-Init.prototype.loadConfiguration = (configPath) => {
-  const json = fs.readFileSync(configPath);
-  const configure = JSON.parse(json.toString());
-
-  return configure;
-};
 
 module.exports = Init;
