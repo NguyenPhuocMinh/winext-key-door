@@ -14,13 +14,13 @@ const generatePassword = require('../utils/generatePassword');
 function Init(params = {}) {
   const { app, router, loggerFactory, loggerTracer } = params;
 
+  loggerTracer.info(chalk.green.bold(`Start func Init key manager successfully!`));
+
   const configurePath = path.join(process.cwd(), 'keyManager.json');
   if (!configurePath) {
     throw errorManager.newError('NotFoundConfigKeyManagerJSON', errorCodes);
   }
   const configure = loadConfiguration(configurePath);
-
-  loggerTracer.info(chalk.green.bold(`Start func Init key manager successfully!`));
 
   return async (request, response, next) => {
     const { requestID } = request;
@@ -29,19 +29,23 @@ function Init(params = {}) {
       requestId: `${requestID}`,
     });
 
+    const userNameAdmin = configure.admin.userName;
+    const passwordAdmin = await generatePassword(configure.admin.password);
+    const slugName = parseSlug(configure.admin.userName);
+
     // create supper admin
     const [user, created] = await dataSequelizeStore.findCreate({
       type: 'SupperAdminModel',
       options: {
         where: {
-          userName: configure.admin.userName,
-          slug: parseSlug(configure.admin.userName),
+          userName: userNameAdmin,
+          slug: slugName,
           deleted: false,
         },
         defaults: {
-          userName: configure.admin.userName,
-          password: generatePassword(configure.admin.password),
-          slug: parseSlug(configure.admin.userName),
+          userName: userNameAdmin,
+          password: passwordAdmin,
+          slug: slugName,
         },
       },
     });
