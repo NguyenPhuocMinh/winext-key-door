@@ -1,5 +1,5 @@
 'use strict';
 
-const defaultPaths = '/auth';
+const defaultPaths = '/admin';
 
 module.exports = { defaultPaths };
