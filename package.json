@@ -2,19 +2,35 @@
   "name": "winext-key-store",
   "version": "1.0.0",
   "description": "Manager role and permissions with supper admin page",
-  "homepage": "https://github.com/NguyenPhuocMinh/winext-key-store",
-  "main": "index.js",
+  "homepage": "https://github.com/NguyenPhuocMinh/winext-key-manager",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "DEBUG=express:* node server.js"
   },
   "keywords": [
-    "winext",
-    "keycloak"
+    "winext"
   ],
   "author": "Minh Nguyễn",
   "license": "ISC",
   "dependencies": {
-    "winext": "git+https://github.com/NguyenPhuocMinh/winext.git#7204b6569376a8769b28515bc54a41ad31842e0a"
+    "body-parser": "^1.20.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "helmet": "^5.1.0",
+    "morgan": "^1.10.0",
+    "mysql2": "^2.3.3",
+    "redis": "^4.1.0",
+    "sequelize": "^6.20.1",
+    "serve-favicon": "^2.5.0",
+    "swagger-ui-express": "^4.4.0",
+    "winext": "git+https://github.com/NguyenPhuocMinh/winext.git#1ba19d019e24b03500f675b71450592508513d8a",
+    "winext-authorization": "git+https://github.com/NguyenPhuocMinh/winext-authorization.git#697064122fec0f91fd553ff286b54807acf8bce9",
+    "winext-error-manager": "git+https://github.com/NguyenPhuocMinh/winext-error-manager.git#6c2e5b88a8021f33d24bb31367921a11c6afc1ff",
+    "winext-logger": "git+https://github.com/NguyenPhuocMinh/winext-logger.git#dcb3b33256956b031eeabf42b019664925f0a0f1",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "eslint": "^7.29.0",

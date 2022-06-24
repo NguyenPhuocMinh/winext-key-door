@@ -1,0 +1,834 @@
+openapi: 3.0.1
+info:
+  title: REST API Standard Template
+  summary: REST API docs
+  description: This is a sample REST API has been produced to allow for easy access to a standard method for documenting a REST API
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: API Docs
+    url: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.1.md
+    email: support@example.com
+  version: 1.0.0
+servers:
+  - url: "{protocol}://{host}:{port}{basePath}"
+    description: The deployment API Server
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+      host:
+        default: localhost
+      port:
+        default: "7878"
+      basePath:
+        default: /
+## paths
+paths:
+  /console/login:
+    post:
+      tags:
+        - admin
+      security: []
+      summary: Login admin
+      description: Login admin key manager
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/adminLogin"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+  /console/logout:
+    post:
+      tags:
+        - admin
+      summary: Logout admin
+      description: Logout admin key manager
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/adminLogin"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+  /console/realm:
+    get:
+      tags:
+        - realms
+      security:
+        - X-Access-Token: []
+      summary: Get all realm
+      description: Get all realm client
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 0
+          description: The number of items to skip before starting to collect the result
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1000
+          description: The numbers of items to return
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+    post:
+      tags:
+        - realms
+      security:
+        - cookieAuth: []
+      summary: Create realm
+      description: Create realm client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createRealm"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+  /console/realm/{id}:
+    get:
+      tags:
+        - realms
+      security:
+        - X-Access-Token: []
+      summary: Get realm by id
+      description: Return item realm
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id of realm
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+    put:
+      tags:
+        - realms
+      security:
+        - X-Access-Token: []
+      summary: Update realm by id
+      description: Return result update realm
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id of realm
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+    delete:
+      tags:
+        - realms
+      security:
+        - X-Access-Token: []
+      summary: Delete realm by id
+      description: Return result delete realm
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id of realm
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+  /console/{realm}/roles:
+    get:
+      tags:
+        - roles
+      security:
+        - X-Access-Token: []
+      summary: Get all roles in realm
+      description: Return list roles
+      parameters:
+        - name: realm
+          in: path
+          schema:
+            type: string
+            default: realm_name
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 0
+          description: The number of items to skip before starting to collect the result
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1000
+          description: The numbers of items to return
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+    post:
+      tags:
+        - roles
+      security:
+        - X-Access-Token: []
+      summary: Create role
+      description: Create new role
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createRole"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+  /console/{realm}/{role-name}:
+    get:
+      tags:
+        - roles
+      security:
+        - X-Access-Token: []
+      summary: Get role by name
+      description: Return role
+      parameters:
+        - name: realm
+          in: path
+          schema:
+            type: string
+            default: realm_name
+        - name: role-name
+          in: path
+          schema:
+            type: string
+            default: role_name
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+  /console/{realm}/users:
+    get:
+      tags:
+        - users
+      security:
+        - X-Access-Token: []
+      summary: Get all users
+      description: Return list users
+      parameters:
+        - name: realm
+          in: path
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 0
+          description: The number of items to skip before starting to collect the result
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 1000
+          description: The numbers of items to return
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+    post:
+      tags:
+        - user
+      security:
+        - X-Access-Token: []
+      summary: Create user
+      description: Create new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createUser"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+  /console/{realm}/users/{id}:
+    get:
+      tags:
+        - users
+      security:
+        - X-Access-Token: []
+      summary: Get user by id
+      description: Return item user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id of user
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+    put:
+      tags:
+        - users
+      security:
+        - X-Access-Token: []
+      summary: Update user by id
+      description: Return result update user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createUser"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+  /console/{realm}/groups:
+    get:
+      tags:
+        - groups
+      security:
+        - X-Access-Token: []
+      summary: Get all groups
+      description: Return item groups
+      parameters:
+        - name: realm
+          in: path
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+    post:
+      tags:
+        - groups
+      security:
+        - X-Access-Token: []
+      summary: Create new group
+      description: Create new group
+      parameters:
+        - name: realm
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createGroup"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+  /console/{realm}/groups/{id}:
+    get:
+      tags:
+        - groups
+      security:
+        - X-Access-Token: []
+      summary: Get group by id
+      description: Return item group
+      parameters:
+        - name: realm
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+    put:
+      tags:
+        - groups
+      security:
+        - X-Access-Token: []
+      summary: Update group by id
+      description: Return result update group
+      parameters:
+        - name: realm
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+    delete:
+      tags:
+        - groups
+      security:
+        - X-Access-Token: []
+      summary: Delete group by id
+      description: Return result delete group
+      parameters:
+        - name: realm
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+## components
+components:
+  # security
+  securitySchemes:
+    X-Access-Token:
+      type: apiKey
+      name: X-Access-Token
+      in: header
+  # responses
+  responses:
+    ServerError:
+      description: ServerError
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/commonResponse"
+    BadRequest:
+      description: BadRequest
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/commonResponse"
+    NotFound:
+      description: NotFound
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/commonResponse"
+    UnAuthorization:
+      description: UnAuthorization
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/commonResponse"
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/commonResponse"
+  # schemas
+  schemas:
+    commonResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties: {}
+        method:
+          type: string
+          example: GET/POST/PUT/DELETE/...
+        endpoint:
+          type: string
+          example: /api/v1/...
+        name:
+          type: string
+          example: Return name message
+        message:
+          type: string
+          example: Return message
+        returnCode:
+          type: integer
+          example: 200/400/500/...
+        statusCode:
+          type: integer
+          example: 200/400/500/...
+
+    adminLogin:
+      type: object
+      required:
+        - userName
+        - password
+      properties:
+        userName:
+          type: string
+          default: admin
+        password:
+          type: string
+          default: admin
+
+    createRealm:
+      type: object
+      required:
+        - userName
+        - password
+      properties:
+        userName:
+          type: string
+          default: John
+        password:
+          type: string
+          default: 123
+
+    getRealms:
+      type: object
+      required:
+        - name
+        - description
+        - title
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        title:
+          type: string
+        registerDate:
+          type: date
+
+    createUser:
+      type: object
+      required:
+        - name
+        - password
+      properties:
+        name:
+          type: string
+          default: John
+        password:
+          type: string
+          default: 123
+
+    createRole:
+      type: object
+      required:
+        - name
+        - password
+      properties:
+        name:
+          type: string
+          default: John
+        password:
+          type: string
+          default: 123
+
+    createGroup:
+      type: object
+      required:
+        - userName
+        - password
+      properties:
+        userName:
+          type: string
+          default: admin
+        password:
+          type: string
+          default: admin

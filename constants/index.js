@@ -1,0 +1,267 @@
+'use strict';
+
+/**
+ * @description TYPES
+ */
+const types = {
+  MsgTypeAdmin: 'ADMIN',
+  MsgTypeRealm: 'REALM',
+  MsgTypeUser: 'USER',
+  MsgTypeRole: 'ROLE',
+  MsgTypeGroup: 'GROUP',
+  MsgTypeKey: 'KEY',
+  MsgTypeToken: 'TOKEN',
+};
+
+/**
+ * @description ADMINS ACTIONS
+ */
+const adminActions = {
+  MsgActionLoginAdmin: 'ADMIN_LOGIN',
+  MsgActionLogoutAdmin: 'ADMIN_LOGOUT',
+};
+
+/**
+ * @description REALMS ACTIONS
+ */
+const realmActions = {
+  MsgActionRealmCreate: 'REALM_CREATE',
+  MsgActionRealmGetAll: 'REALM_GET_ALL',
+  MsgActionRealmGetById: 'REALM_GET_BY_ID',
+  MsgActionRealmUpdate: 'REALM_UPDATE',
+  MsgActionRealmDelete: 'REALM_DELETE',
+};
+
+/**
+ * @description KEYS ACTIONS
+ */
+const keyActions = {
+  MsgActionKeyCreate: 'KEY_CREATE',
+  MsgActionKeyGetById: 'KEY_GET_BY_ID',
+  MsgActionKeyUpdate: 'KEY_UPDATE',
+};
+
+/**
+ * @description TOKENS ACTIONS
+ */
+const tokenActions = {
+  MsgActionTokenCreate: 'TOKEN_CREATE',
+  MsgActionTokenGetById: 'TOKEN_GET_BY_ID',
+  MsgActionTokenUpdate: 'TOKEN_UPDATE',
+};
+
+/**
+ * @description USERS ACTIONS
+ */
+const userActions = {
+  MsgActionUserCreate: 'USER_CREATE',
+  MsgActionUserGetAll: 'USER_GET_ALL',
+  MsgActionUserGetById: 'USER_GET_BY_ID',
+  MsgActionUserUpDate: 'USER_UPDATE',
+  MsgActionUserDelete: 'USER_DELETE',
+  MsgActionUserCount: 'USER_COUNT',
+  MsgActionGetUserGroup: 'GET_USER_GROUP',
+  MsgActionAddUserToGroup: 'ADD_USER_TO_GROUP',
+  MsgActionDeleteUserFromGroup: 'DELETE_USER_FROM_GROUP',
+  MsgActionSetUpTemporaryPassword: 'SETUP_TEMPORARY_PASSWORD',
+};
+
+/**
+ * @description ROLES ACTIONS
+ */
+const roleActions = {
+  MsgActionRoleCreate: 'ROLE_CREATE',
+  MsgActionRoleGetAll: 'ROLE_GET_ALL',
+  MsgActionRoleGetByName: 'ROLE_GET_BY_NAME',
+  MsgActionRoleUpdateByName: 'ROLE_UPDATE_BY_NAME',
+  MsgActionRoleDeleteByName: 'ROLE_DELETE_BY_NAME',
+  MsgActionRoleUsersByRoleName: 'ROLE_USERS_BY_ROLE_NAME',
+};
+
+/**
+ * @description GROUPS ACTIONS
+ */
+const groupActions = {
+  MsgActionGroupCreate: 'GROUP_CREATE',
+  MsgActionGroupGetAll: 'GROUP_GET_ALL',
+  MsgActionGroupGetById: 'GROUP_GET_BY_ID',
+  MsgActionGroupUpdate: 'GROUP_UPDATE',
+  MsgActionGroupDelete: 'GROUP_DELETE',
+  MsgActionGroupCount: 'GROUP_COUNT',
+  MsgActionGroupMembers: 'GROUP_MEMBERS',
+};
+
+const actions = {
+  ...adminActions,
+  ...realmActions,
+  ...userActions,
+  ...roleActions,
+  ...groupActions,
+  ...keyActions,
+  ...tokenActions,
+};
+
+const ATTRIBUTE_TOKEN_KEY = 'X-Access-Token';
+const ATTRIBUTE_RETURN_CODE = 'X-Return-Code';
+const ATTRIBUTE_REQUEST_ID_KEY = 'X-Request-Id';
+const ATTRIBUTE_REQUEST_ID = 'requestID';
+
+const APP_NAME = 'app-key-manager';
+
+const STRUCT_NAME_CORE = 'core';
+const STRUCT_NAME_ROUTER = 'router';
+const STRUCT_NAME_ORCHESTRATOR = 'orchestrator';
+const STRUCT_NAME_REPOSITORY = 'repository';
+
+// database
+const STRUCT_NAME_DATABASE = 'database';
+// services
+const STRUCT_NAME_SERVICE_REDIS = 'redis';
+
+// middlewares
+const CORS_MIDDLEWARE = 'cors-middleware';
+const REQUEST_ID_MIDDLEWARE = 'requestID-middleware';
+const TOKEN_MIDDLEWARE = 'token-middleware';
+const ERROR_MIDDLEWARE = 'error-middleware';
+const REDIS_MIDDLEWARE = 'redis-middleware';
+
+const STRUCT_MIDDLEWARES = {
+  CORS_MIDDLEWARE,
+  REQUEST_ID_MIDDLEWARE,
+  TOKEN_MIDDLEWARE,
+  ERROR_MIDDLEWARE,
+  REDIS_MIDDLEWARE,
+};
+
+// utils
+const CONFIGURE_UTIL = 'configure-util';
+const CONVERT_UTIL = 'configure-util';
+const ERROR_UTIL = 'error-util';
+const LOOKUP_UTIL = 'lookup-util';
+const TEMPLATE_UTIL = 'template-util';
+const RESPONSE_UTIL = 'response-util';
+const VALIDATE_UTIL = 'validate-util';
+const GENERATE_UTIL = 'generate-util';
+
+const STRUCT_UTILS = {
+  CONFIGURE_UTIL,
+  CONVERT_UTIL,
+  ERROR_UTIL,
+  LOOKUP_UTIL,
+  TEMPLATE_UTIL,
+  RESPONSE_UTIL,
+  VALIDATE_UTIL,
+  GENERATE_UTIL,
+};
+
+// controllers
+const BASE_CONTROLLER = 'base-controller';
+const ADMIN_CONTROLLER = 'admin-controller';
+const REALM_CONTROLLER = 'realm-controller';
+const USER_CONTROLLER = 'user-controller';
+const ROLE_CONTROLLER = 'role-controller';
+const GROUP_CONTROLLER = 'group-controller';
+const CLIENT_CONTROLLER = 'group-controller';
+const KEY_CONTROLLER = 'key-controller';
+const TOKEN_CONTROLLER = 'token-controller';
+
+const STRUCT_CONTROLLERS = {
+  BASE_CONTROLLER,
+  ADMIN_CONTROLLER,
+  REALM_CONTROLLER,
+  USER_CONTROLLER,
+  ROLE_CONTROLLER,
+  GROUP_CONTROLLER,
+  CLIENT_CONTROLLER,
+  KEY_CONTROLLER,
+  TOKEN_CONTROLLER,
+};
+
+// orchestrators
+const ADMIN_ORCHESTRATOR = 'admin-orchestrator';
+const REALM_ORCHESTRATOR = 'realm-orchestrator';
+const USER_ORCHESTRATOR = 'user-orchestrator';
+const ROLE_ORCHESTRATOR = 'role-orchestrator';
+const GROUP_ORCHESTRATOR = 'group-orchestrator';
+const KEY_ORCHESTRATOR = 'key-orchestrator';
+const TOKEN_ORCHESTRATOR = 'token-orchestrator';
+
+const STRUCT_ORCHESTRATORS = {
+  ADMIN_ORCHESTRATOR,
+  REALM_ORCHESTRATOR,
+  USER_ORCHESTRATOR,
+  ROLE_ORCHESTRATOR,
+  GROUP_ORCHESTRATOR,
+  KEY_ORCHESTRATOR,
+  TOKEN_ORCHESTRATOR
+};
+
+const REALM_CACHE = 'realm-cache';
+
+const STRUCT_CACHES = {
+  REALM_CACHE,
+};
+
+// timezone
+const TIMEZONE_DEFAULT = 'Asia/Ho_Chi_Minh';
+const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+const DEFAULT_SYSTEM = 'system';
+
+const DEFAULT_LIMIT = 100;
+const DEFAULT_SKIP = 0;
+
+// tokens
+const TOKEN_ERROR = {
+  TOKEN_EXPIRED: 'TokenExpiredError',
+};
+
+const HTTP_STATS = {
+  SUCCESS: '200',
+  CREATED: '201',
+  ACCEPTED: '202',
+  BAD_REQUEST: '400',
+  AUTHORIZATION: '401',
+  FORBIDDEN: '403',
+  NOT_FOUND: '404',
+  SERVER_ERROR: '500',
+};
+
+const HTTP_METHOD = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  DELETE: 'DELETE',
+  PATCH: 'PATCH',
+  OPTIONS: 'OPTIONS',
+};
+
+const constants = {
+  types,
+  actions,
+  ATTRIBUTE_TOKEN_KEY,
+  ATTRIBUTE_RETURN_CODE,
+  ATTRIBUTE_REQUEST_ID_KEY,
+  ATTRIBUTE_REQUEST_ID,
+  APP_NAME,
+  STRUCT_NAME_CORE,
+  STRUCT_NAME_DATABASE,
+  STRUCT_NAME_SERVICE_REDIS,
+  STRUCT_NAME_ROUTER,
+  STRUCT_NAME_ORCHESTRATOR,
+  STRUCT_NAME_REPOSITORY,
+  STRUCT_MIDDLEWARES,
+  STRUCT_UTILS,
+  STRUCT_CONTROLLERS,
+  STRUCT_ORCHESTRATORS,
+  STRUCT_CACHES,
+  TIMEZONE_DEFAULT,
+  DATE_FORMAT,
+  DEFAULT_SYSTEM,
+  DEFAULT_LIMIT,
+  DEFAULT_SKIP,
+  TOKEN_ERROR,
+  HTTP_STATS,
+  HTTP_METHOD,
+};
+
+module.exports = constants;
