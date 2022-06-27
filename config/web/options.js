@@ -19,7 +19,7 @@ const corsOptions = {
 };
 
 const memoryStore = new sessionParser.MemoryStore();
-const session = {
+const sessionOptions = {
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
@@ -50,7 +50,7 @@ const cookieOptions = {
 const options = {
   server,
   corsOptions,
-  session,
+  sessionOptions,
   sequelizeOptions,
   tokenOptions,
   cookieOptions,

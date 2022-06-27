@@ -67,7 +67,12 @@ const SuccessCodes = {
     statusCode: 201,
   },
   GetUserByIDSuccess: {
-    message: 'users.notification.getID.success',
+    message: 'notifications.users.getID.success',
+    returnCode: 1012,
+    statusCode: 200,
+  },
+  UpdateUserByIDSuccess: {
+    message: 'notifications.users.update.success',
     returnCode: 1012,
     statusCode: 200,
   },

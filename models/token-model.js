@@ -29,10 +29,10 @@ module.exports = (sequelize, DataTypes) => {
       // filter
       realmName: { type: DataTypes.STRING },
       deleted: { type: DataTypes.BOOLEAN, defaultValue: false },
-      created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-      created_by: { type: DataTypes.STRING },
-      updated_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-      updated_by: { type: DataTypes.STRING },
+      createdAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+      createdBy: { type: DataTypes.STRING },
+      updatedAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+      updatedBy: { type: DataTypes.STRING },
     },
     {
       sequelize,

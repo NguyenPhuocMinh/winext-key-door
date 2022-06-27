@@ -9,7 +9,7 @@ const tokenGenerator = require('winext-authorization').tokenGenerator;
 const { isEmpty, isEqual } = lodash;
 
 // configs
-const { options } = require('../../config');
+const { options, webConfigs } = require('../../config');
 const constants = require('../../constants');
 
 // repository
@@ -96,7 +96,7 @@ const LoginAdmin = async (toolBox) => {
 
     loggerFactory.info(`Function loginAdmin orchestrator has been end`);
 
-    return { result: { accessToken }, msg: 'LoginAdminSuccess' };
+    return { result: { accessToken, webConfigs }, msg: 'LoginAdminSuccess' };
   } catch (err) {
     loggerFactory.error(`Function loginAdmin orchestrator has error`, {
       args: err.message,
@@ -130,6 +130,8 @@ const convertDataResponse = (data) => {
     response.id = data.id;
     response.userName = data.userName;
     response.email = data.email;
+    response.firstName = data.firstName;
+    response.lastName = data.lastName;
 
     return response;
   }

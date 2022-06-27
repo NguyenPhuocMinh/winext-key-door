@@ -7,43 +7,43 @@ const { UserController } = require('../controllers');
  */
 const UserRouter = [
   {
-    pathName: '/:realm/users',
+    pathName: '/users',
     method: 'POST',
     methodName: 'CreateUser',
     controller: UserController.CreateUser,
   },
   {
-    pathName: '/:realm/users',
+    pathName: '/users',
     method: 'GET',
     methodName: 'GetAllUser',
     controller: UserController.GetAllUser,
   },
   {
-    pathName: '/:realm/users/:id',
+    pathName: '/users/:id',
     method: 'GET',
     methodName: 'GetUserById',
     controller: UserController.GetUserById,
   },
   {
-    pathName: '/:realm/users/:id',
-    method: 'PUT',
+    pathName: '/users/:id',
+    method: 'PATCH',
     methodName: 'UpdateUser',
     controller: UserController.UpdateUser,
   },
   {
-    pathName: '/:realm/users/:id',
+    pathName: '/users/:id',
     method: 'DELETE',
     methodName: 'DeleteUser',
     controller: UserController.DeleteUser,
   },
   {
-    pathName: '/:realm/users/count',
+    pathName: '/users/count',
     method: 'GET',
     methodName: 'CountUsers',
     controller: UserController.CountUsers,
   },
   {
-    pathName: '/:realm/users/:id/groups',
+    pathName: '/users/:id/groups',
     method: 'GET',
     methodName: 'GetUserGroup',
     controller: UserController.GetUserGroup,

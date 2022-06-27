@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const Buffer = require('buffer').Buffer;
 const winext = require('winext');
 const logger = require('winext-logger');
+const bcrypt = winext.require('bcryptjs');
 const lodash = winext.require('lodash');
 const constants = require('../constants');
 const { assign } = lodash;
@@ -34,8 +35,8 @@ const GenerateKeyPair = (options = {}) => {
     const keyPairOptions = assign({}, defaultOptions, options);
 
     const { privateKey, publicKey } = crypto.generateKeyPair('rsa', keyPairOptions);
-    console.log("🚀 ~ file: generate-util.js ~ line 37 ~ GenerateKeyPair ~ publicKey", publicKey)
-    console.log("🚀 ~ file: generate-util.js ~ line 37 ~ GenerateKeyPair ~ privateKey", privateKey)
+    console.log('🚀 ~ file: generate-util.js ~ line 37 ~ GenerateKeyPair ~ publicKey', publicKey);
+    console.log('🚀 ~ file: generate-util.js ~ line 37 ~ GenerateKeyPair ~ privateKey', privateKey);
 
     const verifiableData = 'this need to be verified';
 
@@ -74,8 +75,14 @@ const GenerateKeyPair = (options = {}) => {
   }
 };
 
+const GenerateSalt = () => {
+  const salt = bcrypt.genSaltSync(10);
+  return salt;
+};
+
 const generateUtils = {
   GenerateKeyPair,
+  GenerateSalt,
 };
 
 module.exports = generateUtils;

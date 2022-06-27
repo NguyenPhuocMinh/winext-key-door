@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       this.belongsTo(models.RealmModel, { as: 'realm', foreignKey: 'realmID' });
+      this.hasOne(models.ProviderKeyModel, { as: 'key', foreignKey: 'keyID' });
     }
   }
   KeyModel.init(

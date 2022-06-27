@@ -116,7 +116,7 @@ const GetByIdRealm = async (toolBox) => {
     const { id } = req.params;
 
     if (isEmpty(id)) {
-      throw errorUtils.BuildNewError('RealmIdNotFound');
+      throw errorUtils.BuildNewError('RealmIDNotFound');
     }
 
     const realm = await RealmModel.findOne({
@@ -168,8 +168,8 @@ const UpdateRealm = async (toolBox) => {
     const { id } = req.params;
     const { name, titleName } = req.body;
 
-    if (!isEmpty(id)) {
-      throw errorUtils.BuildNewError('RealmIdNotFound');
+    if (isEmpty(id)) {
+      throw errorUtils.BuildNewError('RealmIDNotFound');
     }
 
     const slug = slugUtils.parseSlug(name);
@@ -242,9 +242,9 @@ const DeleteRealm = async (toolBox) => {
     }
 
     await realm.destroy({ transaction: t });
-    await t.commit();
-
     await realm.reload();
+
+    await t.commit();
 
     const data = {
       msg: 'DeleteRealmSuccess',

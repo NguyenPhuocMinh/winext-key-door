@@ -1,30 +1,27 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('permissions', {
+    await queryInterface.createTable('provider_keys', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         allowNull: false,
         primaryKey: true,
       },
-      name: { type: Sequelize.STRING },
-      description: { type: Sequelize.TEXT },
+      name: {
+        type: Sequelize.STRING,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
       },
-      createdBy: { type: Sequelize.STRING },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
       },
-      updatedBy: { type: Sequelize.STRING },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('permissions');
+    await queryInterface.dropTable('provider_keys');
   },
 };

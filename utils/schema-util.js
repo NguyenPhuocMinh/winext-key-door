@@ -20,12 +20,10 @@ const realmSchema = {
 const userCreateSchema = {
   type: 'object',
   properties: {
-    firstName: { type: 'string', maxLength: 100 },
-    lastName: { type: 'string', maxLength: 100 },
     userName: { type: 'string', maxLength: 100 },
-    email: { type: 'string' },
+    realmName: { type: 'string' },
   },
-  required: ['firstName', 'lastName', 'userName', 'email'],
+  required: ['userName', 'realmName'],
 };
 
 const roleCreateSchema = {
@@ -58,7 +56,7 @@ const schemaUtils = {
   userCreateSchema,
   roleCreateSchema,
   keyCreateSchema,
-  tokenCreateSchema
+  tokenCreateSchema,
 };
 
 module.exports = schemaUtils;

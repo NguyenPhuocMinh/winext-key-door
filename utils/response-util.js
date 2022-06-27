@@ -19,7 +19,7 @@ const BuildSuccessResponse = (toolBox, args) => {
 
     const templateSuccessResponse = templateUtils.BuildNewSuccessTemplate(toolBox, args);
 
-    const headers = assign({}, header ? header : {}, {
+    const headers = assign({}, header ?? {}, {
       'X-Return-Code': templateSuccessResponse.returnCode,
     });
 

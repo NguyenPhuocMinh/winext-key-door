@@ -35,6 +35,7 @@ module.exports = (sequelize, DataTypes) => {
       //filter
       realmName: { type: DataTypes.STRING },
       slug: { type: DataTypes.STRING },
+      activated: { type: DataTypes.BOOLEAN, defaultValue: false },
       deleted: { type: DataTypes.BOOLEAN, defaultValue: false },
       createdAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
       createdBy: { type: DataTypes.STRING },

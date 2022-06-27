@@ -46,18 +46,23 @@ const ErrorCodes = {
     returnCode: 3003,
     statusCode: 409,
   },
-  RealmNotFound: {
-    message: 'users.notification.create.realm_notfound',
+  RealmNameNotFound: {
+    message: 'notifications.realms.notfound.name',
     returnCode: 3003,
     statusCode: 400,
   },
   RealmIDNotFound: {
-    message: 'realms.notification.id_notfound',
+    message: 'notifications.realms.notfound.id',
     returnCode: 3003,
     statusCode: 400,
   },
-  UserIdNotFound: {
-    message: 'users.notification.create.id_notfound',
+  UserIDNotFound: {
+    message: 'users.notifications.notfound.id',
+    returnCode: 3003,
+    statusCode: 400,
+  },
+  UserNotFound: {
+    message: 'users.notifications.notfound.user',
     returnCode: 3003,
     statusCode: 400,
   },

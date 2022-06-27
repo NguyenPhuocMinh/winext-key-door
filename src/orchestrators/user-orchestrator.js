@@ -3,8 +3,9 @@
 const winext = require('winext');
 const Promise = winext.require('bluebird');
 const lodash = winext.require('lodash');
+const bcrypt = winext.require('bcryptjs');
 const logger = require('winext-logger');
-const { assign, isEmpty } = lodash;
+const { assign, isEmpty, trim, isEqual } = lodash;
 
 // configs
 const constants = require('../../constants');
@@ -21,6 +22,7 @@ const loggerFactory = logUtils.createLogger(constants.APP_NAME, constants.STRUCT
 
 const errorUtils = require('../../utils/error-util');
 const configureUtils = require('../../utils/configure-util');
+const generateUtils = require('../../utils/generate-util');
 
 const CreateUser = async (toolBox) => {
   const { req } = toolBox;
@@ -28,8 +30,7 @@ const CreateUser = async (toolBox) => {
   try {
     loggerFactory.info(`Function CreateUser has been end`);
 
-    const { realm } = req.params;
-    const { userName } = req.body;
+    const { userName, realmName } = req.body;
 
     const slug = slugUtils.parseSlug(userName);
 
@@ -41,21 +42,25 @@ const CreateUser = async (toolBox) => {
 
     const realmData = await RealmModel.findOne({
       where: {
-        name: realm,
+        name: realmName,
       },
       attributes: ['id', 'name'],
     });
 
     if (isEmpty(realmData)) {
-      throw errorUtils.BuildNewError('RealmNotFound');
+      throw errorUtils.BuildNewError('RealmNameNotFound');
     }
 
     req.body.slug = slug;
     req.body = configureUtils.AttributeFilter(req.body, 'create');
 
+    const salt = generateUtils.GenerateSalt();
+
     const values = assign(req.body, {
       realmID: realmData.id,
       realmName: realmData.name,
+      password: bcrypt.hashSync(constants.DEFAULT_PASSWORD, salt),
+      passwordConfirm: bcrypt.hashSync(constants.DEFAULT_PASSWORD, salt),
     });
 
     const user = await UserModel.create(values, { transaction: t });
@@ -87,19 +92,16 @@ const CreateUser = async (toolBox) => {
 
 const GetAllUser = async (toolBox) => {
   const { req } = toolBox;
-  const { realm } = req.params;
   try {
     loggerFactory.info(`Function GetAllUser has been start`);
 
+    const { skip, limit } = configureUtils.CreateFilterPagination(req.query);
+    const query = configureUtils.CreateFindQuery(req.query, ['realmName']);
+
     const users = await UserModel.findAll({
-      where: {
-        deleted: false,
-        realmName: realm,
-      },
-      include: {
-        model: RealmModel,
-        as: 'realm',
-      },
+      where: query,
+      offset: skip,
+      limit: limit,
     });
 
     const response = await configureUtils.ConvertDataResponses(users);
@@ -127,28 +129,38 @@ const GetAllUser = async (toolBox) => {
 
 const GetUserById = async (toolBox) => {
   const { req } = toolBox;
-  const { realm, id } = req.params;
+  const { id } = req.params;
   try {
     loggerFactory.info(`Function GetUserById has been start`);
 
-    if (isEmpty(realm)) {
-      throw errorUtils.BuildNewError('RealmNotFound');
-    }
-
     if (isEmpty(id)) {
-      throw errorUtils.BuildNewError('UserIdNotFound');
+      throw errorUtils.BuildNewError('UserIDNotFound');
     }
 
     const user = await UserModel.findOne({
       where: {
         id: id,
         deleted: false,
-        realmName: realm,
       },
-      attributes: ['firstName', 'lastName', 'email'],
+      attributes: [
+        'id',
+        'userName',
+        'firstName',
+        'lastName',
+        'email',
+        'password',
+        'passwordConfirm',
+        'activated',
+        'realmName',
+        'createdAt',
+      ],
     });
 
-    const response = await configureUtils.ConvertDataResponse(user);
+    if (isEmpty(user)) {
+      throw errorUtils.BuildNewError('UserNotFound');
+    }
+
+    const response = await configureUtils.ConvertDataResponse(user, true);
 
     const data = {
       result: {
@@ -170,35 +182,77 @@ const GetUserById = async (toolBox) => {
 
 const UpdateUser = async (toolBox) => {
   const { req } = toolBox;
-  const { realm, id } = req.params;
-  const { firstName, lastName } = req.body;
+  const t = await sequelize.transaction();
   try {
     loggerFactory.info(`Function UpdateUser has been start`);
 
-    if (isEmpty(realm)) {
-      throw errorUtils.BuildNewError('RealmNotFound');
-    }
+    const { id } = req.params;
+    const { email, firstName, lastName, activated, password, passwordConfirm } = req.body;
 
     if (isEmpty(id)) {
-      throw errorUtils.BuildNewError('UserIdNotFound');
+      throw errorUtils.BuildNewError('UserIDNotFound');
     }
 
     const user = await UserModel.findOne({
       where: {
         id: id,
         deleted: false,
-        realmName: realm,
       },
-      attributes: ['firstName', 'lastName', 'email'],
+      attributes: ['id', 'email', 'firstName', 'lastName', 'activated', 'password', 'passwordConfirm'],
     });
 
-    const response = await configureUtils.ConvertDataResponse(user);
+    if (isEmpty(user)) {
+      throw errorUtils.BuildNewError('UserNotFound');
+    }
+
+    // details
+    user.email = !isEmpty(email) ? trim(email) : '';
+    user.firstName = !isEmpty(firstName) ? trim(firstName) : '';
+    user.lastName = !isEmpty(lastName) ? trim(lastName) : '';
+    user.activated = activated;
+
+    // credentials
+    if (!isEqual(password, passwordConfirm)) {
+      throw errorUtils.BuildNewError('PasswordConfirmNotMatch');
+    }
+    const salt = await bcrypt.genSalt(10);
+
+    const userPassword = !isEmpty(password)
+      ? bcrypt.hash(trim(password), salt)
+      : bcrypt.hash(constants.DEFAULT_PASSWORD, salt);
+
+    const userPasswordConfirm = !isEmpty(passwordConfirm)
+      ? bcrypt.hash(trim(passwordConfirm), salt)
+      : bcrypt.hash(constants.DEFAULT_PASSWORD, salt);
+
+    user.password = userPassword;
+    user.passwordConfirm = userPasswordConfirm;
+
+    await user.save({ transaction: t });
+    await t.commit();
+
+    await user.reload({
+      attributes: [
+        'id',
+        'userName',
+        'firstName',
+        'lastName',
+        'email',
+        'password',
+        'passwordConfirm',
+        'activated',
+        'realmName',
+        'createdAt',
+      ],
+    });
+
+    const response = await configureUtils.ConvertDataResponse(user, true);
 
     const data = {
       result: {
         response,
       },
-      msg: 'GetUserByIDSuccess',
+      msg: 'UpdateUserByIDSuccess',
     };
 
     loggerFactory.info(`Function UpdateUser has been end`);
@@ -208,11 +262,54 @@ const UpdateUser = async (toolBox) => {
     loggerFactory.error(`Function UpdateUser has error`, {
       args: err.message,
     });
+    await t.rollback();
     return Promise.reject(err);
   }
 };
 
-const DeleteUser = (toolBox) => {};
+const DeleteUser = async (toolBox) => {
+  const { req } = toolBox;
+  const t = await sequelize.transaction();
+  try {
+    loggerFactory.info(`Function DeleteUser has been start`);
+
+    const { id } = req.params;
+
+    if (isEmpty(id)) {
+      throw errorUtils.BuildNewError('UserIDNotFound');
+    }
+
+    const user = await UserModel.findOne({
+      where: {
+        id: id,
+        deleted: false,
+      },
+    });
+
+    if (isEmpty(user)) {
+      throw errorUtils.BuildNewError('UserNotFound');
+    }
+
+    await user.destroy({ transaction: t });
+    await user.reload();
+
+    await t.commit();
+
+    const data = {
+      msg: 'DeleteUserSuccess',
+    };
+
+    loggerFactory.info(`Function DeleteUser has been end`);
+
+    return data;
+  } catch (err) {
+    loggerFactory.error(`Function DeleteUser has error`, {
+      args: err.message,
+    });
+    await t.rollback();
+    return Promise.reject(err);
+  }
+};
 
 const CountUsers = (toolBox) => {};
 

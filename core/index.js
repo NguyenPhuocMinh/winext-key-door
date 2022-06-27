@@ -35,7 +35,7 @@ app.use(cors(options.corsOptions));
 app.use(morgan(logger.loggerMiddleware));
 app.use(helmet());
 app.use(cookieParser());
-app.use(sessionParser(options.session));
+app.use(sessionParser(options.sessionOptions));
 app.use(bodyParser.json({ limit: '100mb' }));
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'build')));
@@ -76,7 +76,7 @@ const start = () => {
 
         await database.startDB();
         await database.sequelize
-          .sync({ alter: true, force: true })
+          .sync({ alter: true, force: false })
           .then(() => {
             loggerFactory.info(`Update all model success`);
           })

@@ -79,7 +79,7 @@ const CreateFilterPagination = (query = {}) => {
   };
 };
 
-const CreateFindQuery = (query = {}) => {
+const CreateFindQuery = (query = {}, attributes = []) => {
   const { search } = query;
 
   const _query = {
@@ -94,9 +94,11 @@ const CreateFindQuery = (query = {}) => {
     const _search = slugUtils.parseSlug(search);
 
     const querySearch = { [Op.or]: [] };
-    const searchProperties = ['slug'];
+    const searchDefault = ['slug'];
 
-    searchProperties.forEach((property) => {
+    const searchAttributes = [...searchDefault, ...attributes];
+
+    searchAttributes.forEach((property) => {
       const searchRegex = {};
       searchRegex[property] = { [Op.regexp]: _search };
       querySearch[Op.or].push(searchRegex);
@@ -111,7 +113,7 @@ const CreateFindQuery = (query = {}) => {
 const CreateOrderQuery = (query = {}) => {
   const { _sort, _order } = query;
 
-  const sort = isEmpty(_sort) ? 'slug' : _sort;
+  const sort = isEmpty(_sort) ? 'createdAt' : _sort;
   const order = isEmpty(_order) ? 'DESC' : _order === 'asc' ? 'ASC' : 'DESC';
 
   return [[sort, order]];

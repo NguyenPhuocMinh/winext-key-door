@@ -6,6 +6,7 @@ module.exports = {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
+        allowNull: false,
         primaryKey: true,
       },
       firstName: { type: Sequelize.STRING },
@@ -21,6 +22,7 @@ module.exports = {
       passwordConfirm: { type: Sequelize.STRING },
       realmName: { type: Sequelize.STRING },
       slug: { type: Sequelize.STRING },
+      activated: { type: Sequelize.BOOLEAN, defaultValue: false },
       deleted: { type: Sequelize.BOOLEAN, defaultValue: false },
       createdAt: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
       createdBy: { type: Sequelize.STRING },
