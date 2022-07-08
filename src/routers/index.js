@@ -15,20 +15,24 @@ const loggerFactory = logUtils.createLogger(constants.APP_NAME, constants.STRUCT
 
 const AdminRouter = require('./admin-router');
 const RealmRouter = require('./realm-router');
+const KeyRouter = require('./key-router');
+const EmailRouter = require('./email-router');
+const TokenRouter = require('./token-router');
 const UserRouter = require('./user-router');
 const RoleRouter = require('./role-router');
 const GroupRouter = require('./group-router');
-const KeyRouter = require('./key-router');
-const TokenRouter = require('./token-router');
+const PermissionRouter = require('./permission-router');
 
 const Routes = [
   ...AdminRouter,
   ...RealmRouter,
+  ...KeyRouter,
+  ...EmailRouter,
+  ...TokenRouter,
   ...UserRouter,
   ...RoleRouter,
   ...GroupRouter,
-  ...KeyRouter,
-  ...TokenRouter,
+  ...PermissionRouter,
 ];
 
 /**

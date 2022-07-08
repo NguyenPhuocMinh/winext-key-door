@@ -5,25 +5,19 @@ const { TokenController } = require('../controllers');
 /**
  * @description Register token router
  */
-const RoleRouter = [
+const TokenRouter = [
   {
     pathName: '/:realm/tokens',
     method: 'POST',
-    methodName: 'CreateToken',
-    controller: TokenController.CreateToken,
+    methodName: 'SaveTokenByRealm',
+    controller: TokenController.SaveTokenByRealm,
   },
   {
-    pathName: '/:realm/tokens/:id',
+    pathName: '/:realm/tokens',
     method: 'GET',
-    methodName: 'GetTokenById',
-    controller: TokenController.GetTokenById,
-  },
-  {
-    pathName: '/:realm/tokens/:id',
-    method: 'PATCH',
-    methodName: 'UpdateTokenById',
-    controller: TokenController.UpdateTokenById,
+    methodName: 'GetTokenByRealm',
+    controller: TokenController.GetTokenByRealm,
   },
 ];
 
-module.exports = RoleRouter;
+module.exports = TokenRouter;

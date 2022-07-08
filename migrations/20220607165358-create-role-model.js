@@ -6,18 +6,15 @@ module.exports = {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
-        allowNull: false,
         primaryKey: true,
       },
-      name: {
-        type: Sequelize.STRING,
-      },
-      activated: {
-        type: Sequelize.BOOLEAN,
-      },
-      slug: {
-        type: Sequelize.STRING,
-      },
+      name: { type: Sequelize.STRING },
+      description: { type: Sequelize.STRING },
+      activated: { type: Sequelize.BOOLEAN, defaultValue: false },
+      // filter
+      realmName: { type: Sequelize.STRING },
+      slug: { type: Sequelize.STRING },
+      deleted: { type: Sequelize.BOOLEAN, defaultValue: false },
       createdAt: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
       createdBy: { type: Sequelize.STRING },
       updatedAt: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },

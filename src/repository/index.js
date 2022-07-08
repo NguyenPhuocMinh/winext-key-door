@@ -12,6 +12,10 @@ const EmailModel = require('../../models/email-model')(sequelize, Sequelize.Data
 const TokenModel = require('../../models/token-model')(sequelize, Sequelize.DataTypes);
 const PermissionModel = require('../../models/permission-model')(sequelize, Sequelize.DataTypes);
 
+const UserHasRoleModel = require('../../models/user-has-role-model')(sequelize, Sequelize.DataTypes);
+const GroupHasUserModel = require('../../models/group-has-user-model')(sequelize, Sequelize.DataTypes);
+const RoleHasPermissionModel = require('../../models/role-has-permission-model')(sequelize, Sequelize.DataTypes);
+
 /**
  * @description One-To-One
  */
@@ -26,26 +30,23 @@ TokenModel.belongsTo(RealmModel, { as: 'realm', foreignKey: 'realmID' });
 /**
  * @description One-To-Many
  */
-RealmModel.hasMany(UserModel, { as: 'user', foreignKey: 'realmID' });
+RealmModel.hasMany(UserModel, { as: 'users', foreignKey: 'realmID' });
 UserModel.belongsTo(RealmModel, { as: 'realm', foreignKey: 'realmID' });
 
-RealmModel.hasMany(RoleModel, { as: 'role', foreignKey: 'realmID' });
-RoleModel.hasMany(RealmModel, { as: 'realm', foreignKey: 'realmID' });
-
-RealmModel.hasMany(GroupModel, { as: 'group', foreignKey: 'realmID' });
-GroupModel.hasMany(RealmModel, { as: 'role', foreignKey: 'realmID' });
+RealmModel.hasMany(GroupModel, { as: 'groups', foreignKey: 'realmID' });
+GroupModel.hasMany(RealmModel, { as: 'realm', foreignKey: 'realmID' });
 
 /**
  * @description Many-To-Many
  */
-UserModel.belongsToMany(RoleModel, { through: 'user_has_role', as: 'roles', foreignKey: 'userID' });
-RoleModel.belongsToMany(UserModel, { through: 'user_has_role', as: 'users', foreignKey: 'roleID' });
+UserModel.belongsToMany(RoleModel, { through: UserHasRoleModel, as: 'roles', foreignKey: 'userID' });
+RoleModel.belongsToMany(UserModel, { through: UserHasRoleModel, as: 'users', foreignKey: 'roleID' });
 
-UserModel.belongsToMany(GroupModel, { through: 'group_has_user', as: 'groups', foreignKey: 'userID' });
-GroupModel.belongsToMany(UserModel, { through: 'group_has_user', as: 'users', foreignKey: 'groupID' });
+UserModel.belongsToMany(GroupModel, { through: GroupHasUserModel, as: 'groups', foreignKey: 'userID' });
+GroupModel.belongsToMany(UserModel, { through: GroupHasUserModel, as: 'users', foreignKey: 'groupID' });
 
-RoleModel.belongsToMany(PermissionModel, { through: 'role_has_permission', as: 'permissions', foreignKey: 'roleID' });
-PermissionModel.belongsToMany(RoleModel, { through: 'role_has_permission', as: 'roles', foreignKey: 'perID' });
+RoleModel.belongsToMany(PermissionModel, { through: RoleHasPermissionModel, as: 'permissions', foreignKey: 'roleID' });
+PermissionModel.belongsToMany(RoleModel, { through: RoleHasPermissionModel, as: 'roles', foreignKey: 'perID' });
 
 module.exports = {
   sequelize,
@@ -59,4 +60,7 @@ module.exports = {
   EmailModel,
   TokenModel,
   PermissionModel,
+  UserHasRoleModel,
+  GroupHasUserModel,
+  RoleHasPermissionModel
 };

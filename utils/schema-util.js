@@ -34,7 +34,7 @@ const roleCreateSchema = {
   required: ['name'],
 };
 
-const keyCreateSchema = {
+const tokenCreateSchema = {
   type: 'object',
   properties: {
     name: { type: 'string', maxLength: 100 },
@@ -42,10 +42,36 @@ const keyCreateSchema = {
   required: ['name'],
 };
 
-const tokenCreateSchema = {
+const groupSchema = {
   type: 'object',
   properties: {
     name: { type: 'string', maxLength: 100 },
+  },
+  required: ['name'],
+};
+
+const permissionSchema = {
+  type: 'object',
+  properties: {
+    name: { type: 'string', maxLength: 100 },
+  },
+  required: ['name'],
+};
+
+const emailSchema = {
+  type: 'object',
+  properties: {
+    host: { type: 'string' },
+    from: { type: 'string' },
+  },
+  required: ['host', 'from'],
+};
+
+const keySchema = {
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    priority: { type: 'number', minimum: 0, maximum: 100 },
   },
   required: ['name'],
 };
@@ -55,8 +81,11 @@ const schemaUtils = {
   realmSchema,
   userCreateSchema,
   roleCreateSchema,
-  keyCreateSchema,
   tokenCreateSchema,
+  groupSchema,
+  permissionSchema,
+  emailSchema,
+  keySchema,
 };
 
 module.exports = schemaUtils;

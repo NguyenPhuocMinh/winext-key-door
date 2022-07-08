@@ -15,7 +15,8 @@ module.exports = (sequelize, DataTypes) => {
       this.hasOne(models.EmailModel, { as: 'email', foreignKey: 'realmID' });
       this.hasOne(models.TokenModel, { as: 'token', foreignKey: 'realmID' });
 
-      this.hasMany(models.UserModel, { as: 'user', foreignKey: 'realmID' });
+      this.hasMany(models.UserModel, { as: 'users', foreignKey: 'realmID' });
+      this.hasMany(models.RoleModel, { as: 'roles', foreignKey: 'realmID' });
     }
   }
   RealmModel.init(
@@ -27,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       name: { type: DataTypes.STRING },
       titleName: { type: DataTypes.STRING },
+      frontEndURL: { type: DataTypes.STRING },
       activated: { type: DataTypes.BOOLEAN, defaultValue: false },
       // filter
       slug: { type: DataTypes.STRING },
@@ -39,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       tableName: 'realms',
-      modelName: 'RealmModel',
+      modelName: 'Realm',
       timestamps: false,
     }
   );

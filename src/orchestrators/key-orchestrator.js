@@ -13,7 +13,10 @@ const constants = require('../../constants');
 const { redisClient } = require('../../core/services/redis');
 
 // repository
-const { sequelize, KeyModel } = require('../repository');
+const { sequelize, KeyModel, RealmModel } = require('../repository');
+
+// dto
+const { keyDTO } = require('../dto');
 
 const slugUtils = winext.slugUtils;
 const logUtils = logger.logUtils;
@@ -22,42 +25,78 @@ const loggerFactory = logUtils.createLogger(constants.APP_NAME, constants.STRUCT
 const errorUtils = require('../../utils/error-util');
 const configureUtils = require('../../utils/configure-util');
 
-const CreateKey = async (toolBox) => {
+const SaveKeyByRealm = async (toolBox) => {
   const { req } = toolBox;
   const t = await sequelize.transaction();
 
   try {
-    loggerFactory.info(`Function CreateKey has been start`);
+    loggerFactory.info(`Function SaveKeyByRealm has been start`);
+    const { realm } = req.params;
     const { name } = req.body;
+
+    const realmData = await RealmModel.findOne({
+      where: {
+        name: realm,
+      },
+      attributes: ['id', 'name'],
+    });
+
+    if (isEmpty(realmData)) {
+      throw errorUtils.BuildNewError('RealmNotFound');
+    }
 
     const slug = slugUtils.parseSlug(name);
 
-    const isDuplicate = await configureUtils.CheckDuplicate(KeyModel, { slug });
-
-    if (isDuplicate) {
-      throw errorUtils.BuildNewError('DuplicateKeyName');
-    }
     req.body.slug = slug;
     req.body = configureUtils.AttributeFilter(req.body, 'create');
 
-    const realm = await KeyModel.create(req.body, { transaction: t });
+    const [key, created] = await KeyModel.findOrCreate({
+      where: {
+        realmName: realm,
+      },
+      defaults: {
+        ...req.body,
+        realmID: realmData.id,
+        realmName: realmData.name,
+      },
+      transaction: t,
+    });
 
+    if (!created) {
+      req.body = configureUtils.AttributeFilter(req.body);
+
+      const { name, slug, priority, keySize, algorithm, activated, updatedAt, updatedBy } = req.body;
+
+      key.name = name;
+      key.slug = slug;
+      key.priority = priority;
+      key.keySize = keySize;
+      key.algorithm = algorithm;
+      key.activated = activated;
+      key.updatedAt = updatedAt;
+      key.updatedBy = updatedBy;
+    }
+
+    await key.save({ transaction: t });
     await t.commit();
 
-    const response = await configureUtils.ConvertDataResponse(realm);
+    await key.reload();
+
+    const response = await keyDTO(key);
 
     const data = {
       result: {
         response,
       },
-      msg: 'CreateKeySuccess',
+      msg: 'SaveKeyByRealmSuccess',
     };
 
-    loggerFactory.info(`Function CreateKey has been end`);
+    loggerFactory.info(`Function SaveKeyByRealm has been end`);
 
     return data;
   } catch (err) {
-    loggerFactory.error(`Function CreateKey has error`, {
+    console.error(err);
+    loggerFactory.error(`Function SaveKeyByRealm has error`, {
       args: err.message,
     });
     await t.rollback();
@@ -65,103 +104,55 @@ const CreateKey = async (toolBox) => {
   }
 };
 
-const GetByIdKey = async (toolBox) => {
+const GetKeyByRealm = async (toolBox) => {
   const { req } = toolBox;
-
   try {
-    loggerFactory.info(`Function GetByIdKey has been start`);
-    const { id } = req.params;
+    loggerFactory.info(`Function GetKeyByRealm has been start`);
 
-    if (!isEmpty(id)) {
-      throw errorUtils.BuildNewError('KeyIdNotFound');
-    }
+    const { realm } = req.params;
 
-    const realm = await KeyModel.findOne({
-      where: {
-        id: id,
-      },
-    });
+    const key = await fineOneKey(realm);
 
-    const response = await configureUtils.ConvertDataResponse(realm);
+    const response = await keyDTO(key);
 
     const data = {
       result: {
         response,
       },
-      msg: 'GetKeyByIDSuccess',
+      msg: 'GetKeyByRealmSuccess',
     };
 
-    loggerFactory.info(`Function GetByIdKey has been end`);
+    loggerFactory.info(`Function GetKeyByRealm has been end`);
 
     return data;
   } catch (err) {
-    loggerFactory.error(`Function GetByIdKey has error`, {
+    loggerFactory.error(`Function GetKeyByRealm has error`, {
       args: err.message,
     });
     return Promise.reject(err);
   }
 };
 
-const UpdateKey = async (toolBox) => {
-  const { req } = toolBox;
-  const t = await sequelize.transaction();
-
-  try {
-    loggerFactory.info(`Function UpdateKey has been start`);
-    const { id } = req.params;
-    const { name, titleName } = req.body;
-
-    if (!isEmpty(id)) {
-      throw errorUtils.BuildNewError('KeyIdNotFound');
-    }
-
-    const slug = slugUtils.parseSlug(name);
-
-    const isDuplicate = await configureUtils.CheckDuplicate(KeyModel, { slug });
-
-    if (isDuplicate) {
-      throw errorUtils.BuildNewError('DuplicateKeyName');
-    }
-
-    req.body.slug = slug;
-    req.body = configureUtils.AttributeFilter(req.body);
-
-    const realm = await KeyModel.findOne({
-      where: {
-        id,
-      },
-    });
-
-    realm.titleName = titleName;
-
-    await realm.save({ fields: ['titleName'], transaction: t });
-    await t.commit();
-
-    await realm.reload();
-
-    const response = await configureUtils.ConvertDataResponse(realm);
-
-    const data = {
-      result: {
-        response,
-      },
-      msg: 'UpdateKeySuccess',
-    };
-
-    loggerFactory.info(`Function UpdateKey has been end`);
-
-    return data;
-  } catch (err) {
-    loggerFactory.error(`Function UpdateKey has error`, {
-      args: err.message,
-    });
-    await t.rollback();
-    return Promise.reject(err);
+const fineOneKey = async (realm) => {
+  if (isEmpty(realm)) {
+    throw errorUtils.BuildNewError('RealmNotFound');
   }
+
+  const key = await KeyModel.findOne({
+    where: {
+      realmName: realm,
+    },
+    attributes: ['name', 'useFor', 'priority', 'keySize', 'algorithm', 'activated'],
+  });
+
+  if (isEmpty(key)) {
+    throw errorUtils.BuildNewError('KeyNotFound');
+  }
+
+  return key;
 };
 
 module.exports = {
-  CreateKey: CreateKey,
-  GetByIdKey: GetByIdKey,
-  UpdateKey: UpdateKey,
+  SaveKeyByRealm: SaveKeyByRealm,
+  GetKeyByRealm: GetKeyByRealm,
 };

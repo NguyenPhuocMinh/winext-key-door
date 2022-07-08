@@ -14,7 +14,18 @@ const constants = require('../../constants');
 const { redisClient } = require('../../core/services/redis');
 
 // repository
-const { sequelize, UserModel, RealmModel } = require('../repository');
+const {
+  sequelize,
+  UserModel,
+  RealmModel,
+  RoleModel,
+  GroupModel,
+  UserHasRoleModel,
+  GroupHasUserModel,
+} = require('../repository');
+
+// dto
+const { userDTO } = require('../dto');
 
 const slugUtils = winext.slugUtils;
 const logUtils = logger.logUtils;
@@ -54,13 +65,9 @@ const CreateUser = async (toolBox) => {
     req.body.slug = slug;
     req.body = configureUtils.AttributeFilter(req.body, 'create');
 
-    const salt = generateUtils.GenerateSalt();
-
     const values = assign(req.body, {
       realmID: realmData.id,
       realmName: realmData.name,
-      password: bcrypt.hashSync(constants.DEFAULT_PASSWORD, salt),
-      passwordConfirm: bcrypt.hashSync(constants.DEFAULT_PASSWORD, salt),
     });
 
     const user = await UserModel.create(values, { transaction: t });
@@ -97,16 +104,16 @@ const GetAllUser = async (toolBox) => {
 
     const { skip, limit } = configureUtils.CreateFilterPagination(req.query);
     const query = configureUtils.CreateFindQuery(req.query, ['realmName']);
+    const order = configureUtils.CreateOrderQuery(req.query);
 
-    const users = await UserModel.findAll({
+    const { count: total, rows: users } = await UserModel.findAndCountAll({
       where: query,
       offset: skip,
       limit: limit,
+      order: order,
     });
 
     const response = await configureUtils.ConvertDataResponses(users);
-
-    const total = users.length;
 
     const data = {
       result: {
@@ -133,34 +140,9 @@ const GetUserById = async (toolBox) => {
   try {
     loggerFactory.info(`Function GetUserById has been start`);
 
-    if (isEmpty(id)) {
-      throw errorUtils.BuildNewError('UserIDNotFound');
-    }
+    const user = await findOneUser(id);
 
-    const user = await UserModel.findOne({
-      where: {
-        id: id,
-        deleted: false,
-      },
-      attributes: [
-        'id',
-        'userName',
-        'firstName',
-        'lastName',
-        'email',
-        'password',
-        'passwordConfirm',
-        'activated',
-        'realmName',
-        'createdAt',
-      ],
-    });
-
-    if (isEmpty(user)) {
-      throw errorUtils.BuildNewError('UserNotFound');
-    }
-
-    const response = await configureUtils.ConvertDataResponse(user, true);
+    const response = await userDTO(user);
 
     const data = {
       result: {
@@ -187,66 +169,41 @@ const UpdateUser = async (toolBox) => {
     loggerFactory.info(`Function UpdateUser has been start`);
 
     const { id } = req.params;
-    const { email, firstName, lastName, activated, password, passwordConfirm } = req.body;
 
-    if (isEmpty(id)) {
-      throw errorUtils.BuildNewError('UserIDNotFound');
-    }
+    const user = await findOneUser(id);
 
-    const user = await UserModel.findOne({
-      where: {
-        id: id,
-        deleted: false,
-      },
-      attributes: ['id', 'email', 'firstName', 'lastName', 'activated', 'password', 'passwordConfirm'],
-    });
-
-    if (isEmpty(user)) {
-      throw errorUtils.BuildNewError('UserNotFound');
-    }
+    req.body = configureUtils.AttributeFilter(req.body);
+    const { email, firstName, lastName, activated, password, passwordConfirm, updatedAt, updatedBy } = req.body;
 
     // details
-    user.email = !isEmpty(email) ? trim(email) : '';
-    user.firstName = !isEmpty(firstName) ? trim(firstName) : '';
-    user.lastName = !isEmpty(lastName) ? trim(lastName) : '';
+    user.email = !isEmpty(email) ? trim(email) : user.email;
+    user.firstName = !isEmpty(firstName) ? trim(firstName) : user.firstName;
+    user.lastName = !isEmpty(lastName) ? trim(lastName) : user.lastName;
     user.activated = activated;
 
     // credentials
-    if (!isEqual(password, passwordConfirm)) {
-      throw errorUtils.BuildNewError('PasswordConfirmNotMatch');
+    const salt = generateUtils.GenerateSalt();
+
+    if (!isEmpty(password) && !isEmpty(passwordConfirm)) {
+      if (!isEqual(password, passwordConfirm)) {
+        throw errorUtils.BuildNewError('PasswordConfirmNotMatch');
+      }
+      const userPassword = bcrypt.hashSync(trim(password), salt);
+      const userPasswordConfirm = bcrypt.hashSync(trim(passwordConfirm), salt);
+
+      user.password = userPassword;
+      user.passwordConfirm = userPasswordConfirm;
+      user.expiredTemporary = 86400 * 60; // 2 months
     }
-    const salt = await bcrypt.genSalt(10);
-
-    const userPassword = !isEmpty(password)
-      ? bcrypt.hash(trim(password), salt)
-      : bcrypt.hash(constants.DEFAULT_PASSWORD, salt);
-
-    const userPasswordConfirm = !isEmpty(passwordConfirm)
-      ? bcrypt.hash(trim(passwordConfirm), salt)
-      : bcrypt.hash(constants.DEFAULT_PASSWORD, salt);
-
-    user.password = userPassword;
-    user.passwordConfirm = userPasswordConfirm;
+    user.updatedAt = updatedAt;
+    user.updatedBy = updatedBy;
 
     await user.save({ transaction: t });
     await t.commit();
 
-    await user.reload({
-      attributes: [
-        'id',
-        'userName',
-        'firstName',
-        'lastName',
-        'email',
-        'password',
-        'passwordConfirm',
-        'activated',
-        'realmName',
-        'createdAt',
-      ],
-    });
+    await user.reload();
 
-    const response = await configureUtils.ConvertDataResponse(user, true);
+    const response = await userDTO(user);
 
     const data = {
       result: {
@@ -275,20 +232,7 @@ const DeleteUser = async (toolBox) => {
 
     const { id } = req.params;
 
-    if (isEmpty(id)) {
-      throw errorUtils.BuildNewError('UserIDNotFound');
-    }
-
-    const user = await UserModel.findOne({
-      where: {
-        id: id,
-        deleted: false,
-      },
-    });
-
-    if (isEmpty(user)) {
-      throw errorUtils.BuildNewError('UserNotFound');
-    }
+    const user = await findOneUser(id);
 
     await user.destroy({ transaction: t });
     await user.reload();
@@ -311,15 +255,239 @@ const DeleteUser = async (toolBox) => {
   }
 };
 
-const CountUsers = (toolBox) => {};
+const AddRolesToUser = async (toolBox) => {
+  const { req } = toolBox;
+  const t = await sequelize.transaction();
+  try {
+    loggerFactory.info(`Function AddRolesToUser has been start`);
 
-const GetUserGroup = (toolBox) => {};
+    const { id } = req.params;
+    const { assignedRoles } = req.body;
 
-const AddUserToGroup = (toolBox) => {};
+    const user = await findOneUser(id);
 
-const DeleteUserFromGroup = (toolBox) => {};
+    // roles
+    if (!isEmpty(assignedRoles)) {
+      await UserHasRoleModel.destroy({
+        where: {
+          userID: user.id,
+        },
+        force: true,
+        transaction: t,
+      });
 
-const SetUpTemporaryPassword = (toolBox) => {};
+      const mappingRoles = assignedRoles.map((role) => {
+        return {
+          userID: user.id,
+          roleID: role.id,
+        };
+      });
+
+      await UserHasRoleModel.bulkCreate(mappingRoles, { transaction: t });
+    }
+
+    await user.save({ transaction: t });
+    await t.commit();
+
+    await user.reload();
+
+    const response = await userDTO(user);
+
+    const data = {
+      result: {
+        response,
+      },
+      msg: 'AddRolesToUserSuccess',
+    };
+
+    loggerFactory.info(`Function AddRolesToUser has been end`);
+
+    return data;
+  } catch (err) {
+    loggerFactory.error(`Function AddRolesToUser has error`, {
+      args: err.message,
+    });
+    await t.rollback();
+    return Promise.reject(err);
+  }
+};
+
+const AddGroupsToUser = async (toolBox) => {
+  const { req } = toolBox;
+  const t = await sequelize.transaction();
+  try {
+    loggerFactory.info(`Function AddGroupsToUser has been start`);
+
+    const { id } = req.params;
+    const { assignedGroups } = req.body;
+
+    const user = await findOneUser(id);
+
+    // roles
+    if (!isEmpty(assignedGroups)) {
+      await GroupHasUserModel.destroy({
+        where: {
+          userID: user.id,
+        },
+        force: true,
+        transaction: t,
+      });
+
+      const mappingGroups = assignedGroups.map((group) => {
+        return {
+          userID: user.id,
+          groupID: group.id,
+        };
+      });
+
+      await GroupHasUserModel.bulkCreate(mappingGroups, { transaction: t });
+    }
+
+    await user.save({ transaction: t });
+    await t.commit();
+
+    await user.reload();
+
+    const response = await userDTO(user);
+
+    const data = {
+      result: {
+        response,
+      },
+      msg: 'AddGroupsToUserSuccess',
+    };
+
+    loggerFactory.info(`Function AddGroupsToUser has been end`);
+
+    return data;
+  } catch (err) {
+    loggerFactory.error(`Function AddGroupsToUser has error`, {
+      args: err.message,
+    });
+    await t.rollback();
+    return Promise.reject(err);
+  }
+};
+
+const SetUpTemporaryPassword = async (toolBox) => {
+  const { req } = toolBox;
+  const t = await sequelize.transaction();
+  try {
+    loggerFactory.info(`Function SetUpTemporaryPassword has been start`);
+
+    const { id } = req.params;
+    req.body = configureUtils.AttributeFilter(req.body);
+    const { generatePass, updatedAt, updatedBy } = req.body;
+
+    if (isEmpty(id)) {
+      throw errorUtils.BuildNewError('UserIDNotFound');
+    }
+
+    const user = await UserModel.findOne({
+      where: {
+        id: id,
+        deleted: false,
+      },
+      attributes: ['id', 'password', 'passwordConfirm'],
+    });
+
+    if (isEmpty(user)) {
+      throw errorUtils.BuildNewError('UserNotFound');
+    }
+
+    const salt = generateUtils.GenerateSalt();
+    const generateString = generateUtils.GenerateRandomString();
+
+    if (generatePass) {
+      // for expiredTime and not set new pass
+      user.password = bcrypt.hashSync(generateString, salt);
+      user.passwordConfirm = bcrypt.hashSync(generateString, salt);
+      user.expiredTemporary = 86400 * 60; // 2 months
+    } else {
+      // for create once
+      user.password = bcrypt.hashSync(constants.DEFAULT_PASSWORD, salt);
+      user.passwordConfirm = bcrypt.hashSync(constants.DEFAULT_PASSWORD, salt);
+      user.expiredTemporary = 86400;
+    }
+
+    user.updatedAt = updatedAt;
+    user.updatedBy = updatedBy;
+
+    await user.save({ transaction: t });
+    await user.reload();
+
+    await t.commit();
+
+    const data = {
+      msg: 'SetTemporaryPasswordUserSuccess',
+    };
+
+    loggerFactory.info(`Function SetUpTemporaryPassword has been end`);
+
+    return data;
+  } catch (err) {
+    loggerFactory.error(`Function SetUpTemporaryPassword has error`, {
+      args: err.message,
+    });
+    await t.rollback();
+    return Promise.reject(err);
+  }
+};
+
+const findOneUser = async (id) => {
+  if (isEmpty(id)) {
+    throw errorUtils.BuildNewError('UserIDNotFound');
+  }
+
+  const user = await UserModel.findOne({
+    where: {
+      id: id,
+      deleted: false,
+    },
+    attributes: [
+      'id',
+      'email',
+      'userName',
+      'firstName',
+      'lastName',
+      'activated',
+      'password',
+      'passwordConfirm',
+      'realmName',
+      'createdAt',
+    ],
+    include: [
+      {
+        model: RealmModel,
+        as: 'realm',
+        attributes: ['id', 'name'],
+        include: [
+          {
+            model: GroupModel,
+            as: 'groups',
+            attributes: ['id', 'name'],
+          },
+        ],
+      },
+      {
+        model: RoleModel,
+        as: 'roles',
+        attributes: ['id', 'name'],
+      },
+      {
+        model: GroupModel,
+        as: 'groups',
+        attributes: ['id', 'name'],
+      },
+    ],
+  });
+
+  if (isEmpty(user)) {
+    throw errorUtils.BuildNewError('UserNotFound');
+  }
+
+  return user;
+};
 
 module.exports = {
   CreateUser: CreateUser,
@@ -327,9 +495,7 @@ module.exports = {
   GetUserById: GetUserById,
   UpdateUser: UpdateUser,
   DeleteUser: DeleteUser,
-  CountUsers: CountUsers,
-  GetUserGroup: GetUserGroup,
-  AddUserToGroup: AddUserToGroup,
-  DeleteUserFromGroup: DeleteUserFromGroup,
+  AddRolesToUser: AddRolesToUser,
+  AddGroupsToUser: AddGroupsToUser,
   SetUpTemporaryPassword: SetUpTemporaryPassword,
 };

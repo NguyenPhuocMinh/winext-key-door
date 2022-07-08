@@ -21,14 +21,13 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      signature_algorithm: {
+      signatureAlgorithm: {
         type: DataTypes.ENUM,
         values: ['RS256', 'HS256'],
       },
-      expired: { type: DataTypes.STRING },
+      expired: { type: DataTypes.INTEGER },
       // filter
       realmName: { type: DataTypes.STRING },
-      deleted: { type: DataTypes.BOOLEAN, defaultValue: false },
       createdAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
       createdBy: { type: DataTypes.STRING },
       updatedAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
@@ -37,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       tableName: 'tokens',
-      modelName: 'TokenModel',
+      modelName: 'Token',
       timestamps: false,
     }
   );

@@ -14,9 +14,9 @@ const loggerFactory = logUtils.createLogger(constants.APP_NAME, constants.STRUCT
  * @param {*} next
  */
 const CreateRole = (req, res, next) => {
-  loggerFactory.info(`Function createRole controller has been start`);
+  loggerFactory.info(`Function CreateRole controller has been start`);
   BaseController({ req, res, next }, constants.types.MsgTypeRole, constants.actions.MsgActionRoleCreate);
-  loggerFactory.info(`Function createRole controller has been end`);
+  loggerFactory.info(`Function CreateRole controller has been end`);
 };
 
 /**
@@ -26,9 +26,33 @@ const CreateRole = (req, res, next) => {
  * @param {*} next
  */
 const GetAllRole = (req, res, next) => {
-  loggerFactory.info(`Function getAllRole controller has been start`);
+  loggerFactory.info(`Function GetAllRole controller has been start`);
   BaseController({ req, res, next }, constants.types.MsgTypeRole, constants.actions.MsgActionRoleGetAll);
-  loggerFactory.info(`Function getAllRole controller has been end`);
+  loggerFactory.info(`Function GetAllRole controller has been end`);
+};
+
+/**
+ * @description Get role by id for the realm controller
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+const GetRoleById = (req, res, next) => {
+  loggerFactory.info(`Function GetRoleById controller has been start`);
+  BaseController({ req, res, next }, constants.types.MsgTypeRole, constants.actions.MsgActionRoleById);
+  loggerFactory.info(`Function GetRoleById controller has been end`);
+};
+
+/**
+ * @description Update role by name controller
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+const UpdateRoleByName = (req, res, next) => {
+  loggerFactory.info(`Function updateRole controller has been start`);
+  BaseController({ req, res, next }, constants.types.MsgTypeRole, constants.actions.MsgActionRoleUpdateByName);
+  loggerFactory.info(`Function updateRole controller has been end`);
 };
 
 /**
@@ -44,15 +68,15 @@ const GetRoleByName = (req, res, next) => {
 };
 
 /**
- * @description Update role by name controller
+ * @description Update role by id controller
  * @param {*} req
  * @param {*} res
  * @param {*} next
  */
-const UpdateRoleByName = (req, res, next) => {
-  loggerFactory.info(`Function updateRole controller has been start`);
-  BaseController({ req, res, next }, constants.types.MsgTypeRole, constants.actions.MsgActionRoleUpdateByName);
-  loggerFactory.info(`Function updateRole controller has been end`);
+const UpdateRoleById = (req, res, next) => {
+  loggerFactory.info(`Function UpdateRoleById controller has been start`);
+  BaseController({ req, res, next }, constants.types.MsgTypeRole, constants.actions.MsgActionRoleUpdateById);
+  loggerFactory.info(`Function UpdateRoleById controller has been end`);
 };
 
 /**
@@ -74,16 +98,31 @@ const DeleteRoleByName = (req, res, next) => {
  * @param {*} next
  */
 const GetUsersByRoleName = (req, res, next) => {
-  loggerFactory.info(`Function getUsersByRoleName controller has been start`);
+  loggerFactory.info(`Function GetUsersByRoleName controller has been start`);
   BaseController({ req, res, next }, constants.types.MsgTypeRole, constants.actions.MsgActionRoleUsersByRoleName);
-  loggerFactory.info(`Function getUsersByRoleName controller has been end`);
+  loggerFactory.info(`Function GetUsersByRoleName controller has been end`);
+};
+
+/**
+ * @description Get all permissions in a role by name for the realm controller
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+const GetPermissionsByRoleName = (req, res, next) => {
+  loggerFactory.info(`Function GetPermissionsByRoleName controller has been start`);
+  BaseController({ req, res, next }, constants.types.MsgTypeRole, constants.actions.MsgActionRolePermissionsByRoleName);
+  loggerFactory.info(`Function GetPermissionsByRoleName controller has been end`);
 };
 
 module.exports = {
   CreateRole: CreateRole,
   GetAllRole: GetAllRole,
+  GetRoleById: GetRoleById,
+  UpdateRoleById: UpdateRoleById,
   GetRoleByName: GetRoleByName,
   UpdateRoleByName: UpdateRoleByName,
   DeleteRoleByName: DeleteRoleByName,
   GetUsersByRoleName: GetUsersByRoleName,
+  GetPermissionsByRoleName: GetPermissionsByRoleName,
 };

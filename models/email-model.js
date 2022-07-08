@@ -23,11 +23,15 @@ module.exports = (sequelize, DataTypes) => {
       },
       port: { type: DataTypes.STRING },
       host: { type: DataTypes.STRING },
-      activated: { type: DataTypes.BOOLEAN },
+      from: { type: DataTypes.STRING },
+      fromDisplayName: { type: DataTypes.STRING },
+      replyTo: { type: DataTypes.STRING },
+      replyToDisplayName: { type: DataTypes.STRING },
+      enableSSL: { type: DataTypes.BOOLEAN },
+      enableStartTLS: { type: DataTypes.BOOLEAN },
+      enableAuthentication: { type: DataTypes.BOOLEAN },
       // filter
       realmName: { type: DataTypes.STRING },
-      slug: { type: DataTypes.STRING },
-      deleted: { type: DataTypes.BOOLEAN, defaultValue: false },
       createdAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
       createdBy: { type: DataTypes.STRING },
       updatedAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
@@ -36,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       tableName: 'emails',
-      modelName: 'EmailModel',
+      modelName: 'Email',
       timestamps: false,
     }
   );

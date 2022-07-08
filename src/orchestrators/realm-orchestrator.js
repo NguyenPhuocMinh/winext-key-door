@@ -13,7 +13,7 @@ const constants = require('../../constants');
 const { redisClient } = require('../../core/services/redis');
 
 // repository
-const { sequelize, RealmModel, KeyModel, EmailModel, TokenModel } = require('../repository');
+const { sequelize, RealmModel, KeyModel, EmailModel, TokenModel, UserModel, GroupModel } = require('../repository');
 
 const slugUtils = winext.slugUtils;
 const logUtils = logger.logUtils;
@@ -21,6 +21,7 @@ const loggerFactory = logUtils.createLogger(constants.APP_NAME, constants.STRUCT
 
 const errorUtils = require('../../utils/error-util');
 const configureUtils = require('../../utils/configure-util');
+const { realmDTO } = require('../dto');
 
 const CreateRealm = async (toolBox) => {
   const { req } = toolBox;
@@ -59,6 +60,7 @@ const CreateRealm = async (toolBox) => {
 
     return data;
   } catch (err) {
+    console.error(err);
     loggerFactory.error(`Function CreateRealm has error`, {
       args: err.message,
     });
@@ -101,6 +103,7 @@ const GetAllRealm = async (toolBox) => {
 
     return data;
   } catch (err) {
+    console.error(err);
     loggerFactory.error(`Function GetAllRealm has error`, {
       args: err.message,
     });
@@ -119,27 +122,9 @@ const GetByIdRealm = async (toolBox) => {
       throw errorUtils.BuildNewError('RealmIDNotFound');
     }
 
-    const realm = await RealmModel.findOne({
-      where: {
-        id: id,
-      },
-      include: [
-        {
-          model: KeyModel,
-          as: 'key',
-        },
-        {
-          model: EmailModel,
-          as: 'email',
-        },
-        {
-          model: TokenModel,
-          as: 'token',
-        },
-      ],
-    });
+    const realm = await getRealmID(id);
 
-    const response = await configureUtils.ConvertDataResponse(realm);
+    const response = await realmDTO(realm);
 
     const data = {
       result: {
@@ -152,6 +137,7 @@ const GetByIdRealm = async (toolBox) => {
 
     return data;
   } catch (err) {
+    console.error(err);
     loggerFactory.error(`Function GetByIdRealm has error`, {
       args: err.message,
     });
@@ -262,10 +248,137 @@ const DeleteRealm = async (toolBox) => {
   }
 };
 
+const GetUsersByRealmName = async (toolBox) => {
+  const { req } = toolBox;
+  try {
+    loggerFactory.info(`Function GetUsersByRealmName has been start`);
+
+    const { realmName } = req.params;
+    const { skip, limit } = configureUtils.CreateFilterPagination(req.query);
+    const order = configureUtils.CreateOrderQuery(req.query);
+
+    const { count: total, rows: users } = await UserModel.findAndCountAll({
+      where: {
+        realmName: realmName,
+      },
+      offset: skip,
+      limit: limit,
+      order: order,
+      attributes: ['id', 'userName', 'firstName', 'lastName', 'email', 'activated', 'createdAt'],
+    });
+
+    const response = await configureUtils.ConvertDataResponses(users);
+
+    const data = {
+      result: {
+        response,
+        total,
+      },
+      msg: 'GetUsersByRealmNameSuccess',
+    };
+    loggerFactory.info(`Function GetUsersByRealmName has been end`);
+
+    return data;
+  } catch (err) {
+    console.error(err);
+    loggerFactory.error(`Function GetUsersByRealmName has error`, {
+      args: err.message,
+    });
+    return Promise.reject(err);
+  }
+};
+
+const GetGroupsByRealmName = async (toolBox) => {
+  const { req } = toolBox;
+  try {
+    loggerFactory.info(`Function GetGroupsByRealmName has been start`);
+
+    const { realmName } = req.params;
+    const { skip, limit } = configureUtils.CreateFilterPagination(req.query);
+    const order = configureUtils.CreateOrderQuery(req.query);
+
+    const { count: total, rows: groups } = await GroupModel.findAndCountAll({
+      where: {
+        realmName: realmName,
+      },
+      offset: skip,
+      limit: limit,
+      order: order,
+      attributes: ['id', 'name', 'activated', 'createdAt'],
+    });
+
+    const response = await configureUtils.ConvertDataResponses(groups);
+
+    const data = {
+      result: {
+        response,
+        total,
+      },
+      msg: 'GetGroupsByRealmNameSuccess',
+    };
+    loggerFactory.info(`Function GetGroupsByRealmName has been end`);
+
+    return data;
+  } catch (err) {
+    console.error(err);
+    loggerFactory.error(`Function GetGroupsByRealmName has error`, {
+      args: err.message,
+    });
+    return Promise.reject(err);
+  }
+};
+
+const getRealmID = async (id) => {
+  if (isEmpty(id)) {
+    throw errorUtils.BuildNewError('RealmIDNotFound');
+  }
+
+  const realm = await RealmModel.findOne({
+    where: {
+      id: id,
+    },
+    include: [
+      {
+        model: KeyModel,
+        as: 'key',
+        attributes: ['name', 'priority', 'useFor', 'keySize', 'algorithm', 'activated'],
+      },
+      {
+        model: EmailModel,
+        as: 'email',
+        attributes: [
+          'host',
+          'port',
+          'fromDisplayName',
+          'from',
+          'replyToDisplayName',
+          'replyTo',
+          'enableSSL',
+          'enableStartTLS',
+          'enableAuthentication',
+        ],
+      },
+      {
+        model: TokenModel,
+        as: 'token',
+        attributes: ['signatureAlgorithm', 'expired'],
+      },
+    ],
+  });
+
+  if (isEmpty(realm)) {
+    throw errorUtils.BuildNewError('RealmNotFound');
+  }
+
+  return realm;
+};
+
 module.exports = {
   CreateRealm: CreateRealm,
   GetAllRealm: GetAllRealm,
   GetByIdRealm: GetByIdRealm,
   UpdateRealm: UpdateRealm,
   DeleteRealm: DeleteRealm,
+  GetUsersByRealmName: GetUsersByRealmName,
+  GetGroupsByRealmName: GetGroupsByRealmName,
 };

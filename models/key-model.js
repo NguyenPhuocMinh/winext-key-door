@@ -30,9 +30,7 @@ module.exports = (sequelize, DataTypes) => {
           max: 100,
         },
       },
-      useFor: { type: DataTypes.STRING },
-      provider: { type: DataTypes.STRING },
-      providerDescription: { type: DataTypes.STRING },
+      useFor: { type: DataTypes.STRING, defaultValue: 'SIGN' },
       keySize: {
         type: DataTypes.ENUM,
         values: ['1024', '2048', '4096'],
@@ -45,7 +43,6 @@ module.exports = (sequelize, DataTypes) => {
       activated: { type: DataTypes.BOOLEAN, defaultValue: true },
       // filter
       realmName: { type: DataTypes.STRING },
-      slug: { type: DataTypes.STRING },
       deleted: { type: DataTypes.BOOLEAN, defaultValue: false },
       createdAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
       createdBy: { type: DataTypes.STRING },
@@ -55,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       tableName: 'keys',
-      modelName: 'KeyModel',
+      modelName: 'Key',
       timestamps: false,
     }
   );

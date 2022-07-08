@@ -189,6 +189,11 @@ paths:
         - X-Access-Token: []
       summary: Update realm by id
       description: Return result update realm
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/updateRealm"
       parameters:
         - name: id
           in: path
@@ -246,7 +251,7 @@ paths:
         500:
           $ref: "#/components/responses/ServerError"
 
-  /console/{realm}/roles:
+  /console/roles:
     get:
       tags:
         - roles
@@ -255,11 +260,6 @@ paths:
       summary: Get all roles in realm
       description: Return list roles
       parameters:
-        - name: realm
-          in: path
-          schema:
-            type: string
-            default: realm_name
         - name: limit
           in: query
           schema:
@@ -320,25 +320,21 @@ paths:
         500:
           $ref: "#/components/responses/ServerError"
 
-  /console/{realm}/{role-name}:
+  /console/roles/{id}:
     get:
       tags:
         - roles
       security:
         - X-Access-Token: []
-      summary: Get role by name
-      description: Return role
+      summary: Get role by id
+      description: Return item role
       parameters:
-        - name: realm
+        - name: id
           in: path
+          required: true
           schema:
             type: string
-            default: realm_name
-        - name: role-name
-          in: path
-          schema:
-            type: string
-            default: role_name
+          description: Id of role
       responses:
         200:
           description: OK
@@ -357,7 +353,74 @@ paths:
         500:
           $ref: "#/components/responses/ServerError"
 
-  /console/{realm}/users:
+    put:
+      tags:
+        - roles
+      security:
+        - X-Access-Token: []
+      summary: Update role by id
+      description: Return result update role
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/updateRole"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+    delete:
+      tags:
+        - roles
+      security:
+        - X-Access-Token: []
+      summary: Delete role by id
+      description: Return result delete role
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+  /console/users:
     get:
       tags:
         - users
@@ -366,10 +429,6 @@ paths:
       summary: Get all users
       description: Return list users
       parameters:
-        - name: realm
-          in: path
-          schema:
-            type: string
         - name: limit
           in: query
           schema:
@@ -430,7 +489,7 @@ paths:
         500:
           $ref: "#/components/responses/ServerError"
 
-  /console/{realm}/users/{id}:
+  /console/users/{id}:
     get:
       tags:
         - users
@@ -480,7 +539,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/createUser"
+              $ref: "#/components/schemas/updateUser"
       responses:
         200:
           description: OK
@@ -499,7 +558,38 @@ paths:
         500:
           $ref: "#/components/responses/ServerError"
 
-  /console/{realm}/groups:
+    delete:
+      tags:
+        - users
+      security:
+        - X-Access-Token: []
+      summary: Delete user by id
+      description: Return result delete user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/commonResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/UnAuthorization"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/ServerError"
+
+  /console/groups:
     get:
       tags:
         - groups
@@ -508,10 +598,6 @@ paths:
       summary: Get all groups
       description: Return item groups
       parameters:
-        - name: realm
-          in: path
-          schema:
-            type: string
         - name: limit
           in: query
           schema:
@@ -576,7 +662,7 @@ paths:
         500:
           $ref: "#/components/responses/ServerError"
 
-  /console/{realm}/groups/{id}:
+  /console/groups/{id}:
     get:
       tags:
         - groups
@@ -730,7 +816,7 @@ components:
     commonResponse:
       type: object
       properties:
-        data:
+        result:
           type: object
           properties: {}
         method:
@@ -768,67 +854,94 @@ components:
     createRealm:
       type: object
       required:
-        - userName
-        - password
-      properties:
-        userName:
-          type: string
-          default: John
-        password:
-          type: string
-          default: 123
-
-    getRealms:
-      type: object
-      required:
         - name
-        - description
-        - title
       properties:
         name:
           type: string
-        description:
+          default: e-commerce
+
+    updateRealm:
+      type: object
+      properties:
+        titleName:
           type: string
-        title:
-          type: string
-        registerDate:
-          type: date
+          default: page e-commerce demo
 
     createUser:
       type: object
       required:
-        - name
-        - password
+        - userName
+        - email
+        - realmName
       properties:
-        name:
+        userName:
+          type: string
+          default: JohnDoe
+        firstName:
           type: string
           default: John
+        lastName:
+          type: string
+          default: John
+        email:
+          type: string
+          default: John@gmail.com
+        realmName:
+          type: string
+        activated:
+          type: boolean
+          default: true
+
+    updateUser:
+      type: object
+      required:
+        - email
+      properties:
+        firstName:
+          type: string
+          default: John
+        lastName:
+          type: string
+          default: John
+        email:
+          type: string
         password:
           type: string
-          default: 123
+          default: S3cr3tK3y
+        passwordConfirm:
+          type: string
+          default: S3cr3tK3y
+        activated:
+          type: boolean
+          default: true
 
     createRole:
       type: object
       required:
         - name
-        - password
       properties:
         name:
           type: string
-          default: John
-        password:
+          default: admin
+        description:
           type: string
-          default: 123
+        activated:
+          type: boolean
+          default: true
+
+    updateRole:
+      type: object
+      properties:
+        description:
+          type: string
+        activated:
+          type: boolean
 
     createGroup:
       type: object
       required:
-        - userName
-        - password
+        - name
       properties:
-        userName:
+        name:
           type: string
-          default: admin
-        password:
-          type: string
-          default: admin
+          default: group1

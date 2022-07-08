@@ -26,7 +26,7 @@ const RealmRouter = [
   },
   {
     pathName: '/realms/:id',
-    method: 'PATCH',
+    method: 'PUT',
     methodName: 'UpdateRealm',
     controller: RealmController.UpdateRealm,
   },
@@ -35,6 +35,18 @@ const RealmRouter = [
     method: 'DELETE',
     methodName: 'DeleteRealm',
     controller: RealmController.DeleteRealm,
+  },
+  {
+    pathName: '/realms/:realmName/users',
+    method: 'GET',
+    methodName: 'GetUsersInRealmByRealmName',
+    controller: RealmController.GetUsersInRealmByRealmName,
+  },
+  {
+    pathName: '/realms/:realmName/groups',
+    method: 'GET',
+    methodName: 'GetGroupsInRealmByRealmName',
+    controller: RealmController.GetGroupsInRealmByRealmName,
   },
 ];
 

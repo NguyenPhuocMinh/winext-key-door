@@ -35,6 +35,7 @@ const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   port: dbPort,
   dialect: dialect,
   pool: options.sequelizeOptions.pool,
+  // logging: false,
 });
 
 const startDB = async () => {

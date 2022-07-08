@@ -92,27 +92,27 @@ const GetUserGroup = (req, res, next) => {
 };
 
 /**
- * @description Add user to group controller
+ * @description Add roles to user controller
  * @param {*} req
  * @param {*} res
  * @param {*} next
  */
-const AddUserToGroup = (req, res, next) => {
-  loggerFactory.info(`Function addUserToGroup has been start`);
-  BaseController({ req, res, next }, constants.types.MsgTypeUser, constants.actions.MsgActionAddUserToGroup);
-  loggerFactory.info(`Function addUserToGroup has been end`);
+const AddRolesToUser = (req, res, next) => {
+  loggerFactory.info(`Function AddRolesToUser has been start`);
+  BaseController({ req, res, next }, constants.types.MsgTypeUser, constants.actions.MsgActionAddRolesToUser);
+  loggerFactory.info(`Function AddRolesToUser has been end`);
 };
 
 /**
- * @description Delete user from group controller
+ * @description Add groups to user controller
  * @param {*} req
  * @param {*} res
  * @param {*} next
  */
-const DeleteUserFromGroup = (req, res, next) => {
-  loggerFactory.info(`Function deleteUserFromGroup has been start`);
-  BaseController({ req, res, next }, constants.types.MsgTypeUser, constants.actions.MsgActionDeleteUserFromGroup);
-  loggerFactory.info(`Function deleteUserFromGroup has been end`);
+const AddGroupsToUser = (req, res, next) => {
+  loggerFactory.info(`Function AddGroupsToUser has been start`);
+  BaseController({ req, res, next }, constants.types.MsgTypeUser, constants.actions.MsgActionAddGroupsToUser);
+  loggerFactory.info(`Function AddGroupsToUser has been end`);
 };
 
 /**
@@ -135,7 +135,7 @@ module.exports = {
   DeleteUser: DeleteUser,
   CountUsers: CountUsers,
   GetUserGroup: GetUserGroup,
-  AddUserToGroup: AddUserToGroup,
-  DeleteUserFromGroup: DeleteUserFromGroup,
+  AddRolesToUser: AddRolesToUser,
+  AddGroupsToUser: AddGroupsToUser,
   SetUpTemporaryPassword: SetUpTemporaryPassword,
 };

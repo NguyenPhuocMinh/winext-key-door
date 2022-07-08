@@ -9,20 +9,14 @@ const KeyRouter = [
   {
     pathName: '/:realm/keys',
     method: 'POST',
-    methodName: 'CreateKey',
-    controller: KeyController.CreateKey,
+    methodName: 'SaveKeyByRealm',
+    controller: KeyController.SaveKeyByRealm,
   },
   {
-    pathName: '/:realm/keys/:id',
+    pathName: '/:realm/keys',
     method: 'GET',
-    methodName: 'GetKeyById',
-    controller: KeyController.GetKeyById,
-  },
-  {
-    pathName: '/:realm/keys/:id',
-    method: 'PATCH',
-    methodName: 'CreateKey',
-    controller: KeyController.UpdateKey,
+    methodName: 'GetKeyByRealm',
+    controller: KeyController.GetKeyByRealm,
   },
 ];
 

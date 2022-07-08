@@ -85,10 +85,10 @@ const CountGroup = (req, res, next) => {
  * @param {*} res
  * @param {*} next
  */
-const MembersGroup = (req, res, next) => {
-  loggerFactory.info(`Function membersGroup controller has been start`);
-  BaseController({ req, res, next }, constants.types.MsgTypeGroup, constants.actions.MsgActionGroupMembers);
-  loggerFactory.info(`Function membersGroup controller has been end`);
+const GetUsersByGroupName = (req, res, next) => {
+  loggerFactory.info(`Function GetUsersByGroupName controller has been start`);
+  BaseController({ req, res, next }, constants.types.MsgTypeGroup, constants.actions.MsgActionGroupUsersByGroupName);
+  loggerFactory.info(`Function GetUsersByGroupName controller has been end`);
 };
 
 module.exports = {
@@ -98,5 +98,5 @@ module.exports = {
   UpdateGroup: UpdateGroup,
   DeleteGroup: DeleteGroup,
   CountGroup: CountGroup,
-  MembersGroup: MembersGroup,
+  GetUsersByGroupName: GetUsersByGroupName,
 };

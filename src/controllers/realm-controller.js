@@ -67,10 +67,49 @@ const DeleteRealm = (req, res, next) => {
   loggerFactory.info(`Function DeleteRealm controller has been end`);
 };
 
+/**
+ * @description Get Users InRealm By RealmName Controller
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+const GetUsersInRealmByRealmName = (req, res, next) => {
+  loggerFactory.info(`Function DeleteRealm controller has been start`);
+  BaseController({ req, res, next }, constants.types.MsgTypeRealm, constants.actions.MsgActionRealmUsersByRealmName);
+  loggerFactory.info(`Function DeleteRealm controller has been end`);
+};
+
+/**
+ * @description Get Groups InRealm By RealmName Controller
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+const GetGroupsInRealmByRealmName = (req, res, next) => {
+  loggerFactory.info(`Function GetGroupsInRealmByRealmName controller has been start`);
+  BaseController({ req, res, next }, constants.types.MsgTypeRealm, constants.actions.MsgActionRealmGroupsByRealmName);
+  loggerFactory.info(`Function GetGroupsInRealmByRealmName controller has been end`);
+};
+
+/**
+ * @description Save Key InRealm By RealmName Controller
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+const SaveKeyInRealmByRealmName = (req, res, next) => {
+  loggerFactory.info(`Function SaveKeyInRealmByRealmName controller has been start`);
+  BaseController({ req, res, next }, constants.types.MsgTypeRealm, constants.actions.MsgActionRealmSaveKeyByRealmName);
+  loggerFactory.info(`Function SaveKeyInRealmByRealmName controller has been end`);
+};
+
 module.exports = {
   CreateRealm: CreateRealm,
   GetAllRealm: GetAllRealm,
   GetByIdRealm: GetByIdRealm,
   UpdateRealm: UpdateRealm,
   DeleteRealm: DeleteRealm,
+  GetUsersInRealmByRealmName: GetUsersInRealmByRealmName,
+  GetGroupsInRealmByRealmName: GetGroupsInRealmByRealmName,
+  SaveKeyInRealmByRealmName: SaveKeyInRealmByRealmName
 };

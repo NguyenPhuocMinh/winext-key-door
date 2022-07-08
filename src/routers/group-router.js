@@ -7,46 +7,46 @@ const { GroupController } = require('../controllers');
  */
 const GroupRouter = [
   {
-    pathName: '/:realm/groups',
+    pathName: '/groups',
     method: 'POST',
     methodName: 'CreateGroup',
     controller: GroupController.CreateGroup,
   },
   {
-    pathName: '/:realm/groups',
+    pathName: '/groups',
     method: 'GET',
     methodName: 'GetAllGroup',
     controller: GroupController.GetAllGroup,
   },
   {
-    pathName: '/:realm/groups/:id',
+    pathName: '/groups/:id',
     method: 'GET',
     methodName: 'GetGroupById',
     controller: GroupController.GetGroupById,
   },
   {
-    pathName: '/:realm/groups/:id',
+    pathName: '/groups/:id',
     method: 'PUT',
     methodName: 'UpdateGroup',
     controller: GroupController.UpdateGroup,
   },
   {
-    pathName: '/:realm/groups/:id',
+    pathName: '/groups/:id',
     method: 'DELETE',
     methodName: 'DeleteGroup',
     controller: GroupController.DeleteGroup,
   },
   {
-    pathName: '/:realm/groups/count',
+    pathName: '/groups/count',
     method: 'GET',
     methodName: 'CountGroup',
     controller: GroupController.CountGroup,
   },
   {
-    pathName: '/:realm/groups/:id/members',
+    pathName: '/groups/:groupName/:realmName/users',
     method: 'GET',
-    methodName: 'MembersGroup',
-    controller: GroupController.MembersGroup,
+    methodName: 'GetUsersByGroupName',
+    controller: GroupController.GetUsersByGroupName,
   },
 ];
 

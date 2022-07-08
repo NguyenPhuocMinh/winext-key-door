@@ -18,7 +18,6 @@ const responseUtils = require('../../utils/response-util');
 
 const GetRealmCache = async (req, res, next) => {
   const toolBox = { req, res, next };
-  console.log("🚀 ~ file: realm-cache.js ~ line 21 ~ GetRealmCache ~ req", req.route)
   const { path } = req;
   const redisKey = '/realms';
 

@@ -2,79 +2,109 @@
 
 const ErrorCodes = {
   TokenNotFound: {
-    message: 'Token not found !!!',
-    returnCode: 1001,
+    message: 'common.notifications.errors.tokenNotFound',
+    returnCode: 10001,
     statusCode: 401,
   },
   TokenExpiredError: {
-    message: 'Token expired !!!',
-    returnCode: 1002,
+    message: 'common.notifications.errors.tokenExpiredError',
+    returnCode: 10002,
     statusCode: 401,
   },
   OrchestratorHandlerNotFound: {
-    message: 'Not found function OrchestratorHandler',
-    returnCode: 1001,
+    message: 'common.notifications.errors.orchestratorHandlerNotFound',
+    returnCode: 10003,
     statusCode: 400,
   },
   SchemaNotFound: {
-    message: 'Not found schema validate',
-    returnCode: 1001,
+    message: 'common.notifications.errors.schemaNotFound',
+    returnCode: 10004,
     statusCode: 400,
   },
   UserNameAdminNotFound: {
-    message: 'admin.notification.login.username_notfound',
-    returnCode: 1001,
+    message: 'admin.notifications.errors.userNameAdminNotFound',
+    returnCode: 10005,
     statusCode: 400,
   },
   IncorrectPasswordAdmin: {
-    message: 'admin.notification.login.password_incorrect',
-    returnCode: 1002,
+    message: 'admin.notifications.errors.incorrectPasswordAdmin',
+    returnCode: 10006,
     statusCode: 400,
   },
   DuplicateRealmName: {
-    message: 'realms.notification.create.duplicate_name',
-    returnCode: 3001,
+    message: 'resources.configures.realms.notifications.errors.duplicateName',
+    returnCode: 10007,
     statusCode: 409,
   },
-  DuplicateRoleName: {
-    message: 'roles.notification.create.duplicate_name',
-    returnCode: 3002,
-    statusCode: 409,
-  },
-  DuplicateUserName: {
-    message: 'users.notification.create.duplicate_name',
-    returnCode: 3003,
-    statusCode: 409,
-  },
-  RealmNameNotFound: {
-    message: 'notifications.realms.notfound.name',
-    returnCode: 3003,
+  RealmNotFound: {
+    message: 'resources.manages.realms.notifications.errors.nameNotFound',
+    returnCode: 10008,
     statusCode: 400,
   },
   RealmIDNotFound: {
-    message: 'notifications.realms.notfound.id',
-    returnCode: 3003,
+    message: 'resources.manages.realms.notifications.errors.idNotFound',
+    returnCode: 10009,
+    statusCode: 400,
+  },
+  DuplicateRoleName: {
+    message: 'resources.manages.roles.notifications.errors.duplicateName',
+    returnCode: 100010,
+    statusCode: 409,
+  },
+  RoleNotFound: {
+    message: 'resources.manages.roles.notifications.errors.duplicateName',
+    returnCode: 100011,
+    statusCode: 409,
+  },
+  RoleIDNotFound: {
+    message: 'resources.manages.roles.notifications.errors.notfound.id',
+    returnCode: 100012,
+    statusCode: 409,
+  },
+  DuplicateUserName: {
+    message: 'resources.manages.users.notifications.errors.duplicateName',
+    returnCode: 100013,
+    statusCode: 409,
+  },
+  UserNotFound: {
+    message: 'resources.manages.users.notifications.errors.notfound.name',
+    returnCode: 100014,
     statusCode: 400,
   },
   UserIDNotFound: {
-    message: 'users.notifications.notfound.id',
-    returnCode: 3003,
+    message: 'resources.manages.users.notifications.errors.notfound.id',
+    returnCode: 100015,
     statusCode: 400,
   },
-  UserNotFound: {
-    message: 'users.notifications.notfound.user',
-    returnCode: 3003,
+  PermissionNotFound: {
+    message: 'resources.manages.permissions.notifications.errors.notfound.name',
+    returnCode: 100016,
     statusCode: 400,
   },
-  DuplicateKeyName: {
-    message: 'notifications.keys.create.duplicate_name',
-    returnCode: 3003,
+  PermissionIDNotFound: {
+    message: 'resources.manages.permissions.notifications.errors.notfound.id',
+    returnCode: 100017,
+    statusCode: 400,
+  },
+  DuplicateGroupName: {
+    message: 'resources.manages.groups.notifications.errors.duplicateName',
+    returnCode: 100018,
     statusCode: 409,
   },
-  KeyIdNotFound: {
-    message: 'notifications.keys.id_notfound',
-    returnCode: 3003,
+  DuplicateGroupOrRealmName: {
+    message: 'resources.manages.groups.notifications.errors.duplicateGroupOrRealmName',
+    returnCode: 100019,
     statusCode: 409,
+  },
+  KeyNotFound: {
+    message: 'resources.configures.realms.notifications.errors.keyNotFound',
+    returnCode: 100019,
+    statusCode: 400,
+  },
+  EmailNotFound: {
+    message: 'resources.configures.realms.notifications.errors.emailNotFound',
+    returnCode: 100019,
+    statusCode: 400,
   },
 };
 

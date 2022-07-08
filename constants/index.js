@@ -11,6 +11,8 @@ const types = {
   MsgTypeGroup: 'GROUP',
   MsgTypeKey: 'KEY',
   MsgTypeToken: 'TOKEN',
+  MsgTypePermission: 'TOKEN',
+  MsgTypeEmail: 'EMAIL',
 };
 
 /**
@@ -30,24 +32,24 @@ const realmActions = {
   MsgActionRealmGetById: 'REALM_GET_BY_ID',
   MsgActionRealmUpdate: 'REALM_UPDATE',
   MsgActionRealmDelete: 'REALM_DELETE',
+  MsgActionRealmUsersByRealmName: 'REALM_USERS_BY_REALM_NAME',
+  MsgActionRealmGroupsByRealmName: 'REALM_GROUPS_BY_REALM_NAME',
 };
 
 /**
  * @description KEYS ACTIONS
  */
 const keyActions = {
-  MsgActionKeyCreate: 'KEY_CREATE',
-  MsgActionKeyGetById: 'KEY_GET_BY_ID',
-  MsgActionKeyUpdate: 'KEY_UPDATE',
+  MsgActionKeySaveByRealm: 'KEY_SAVE_BY_REALM',
+  MsgActionKeyGetByRealm: 'KEY_GET_BY_REALM',
 };
 
 /**
  * @description TOKENS ACTIONS
  */
 const tokenActions = {
-  MsgActionTokenCreate: 'TOKEN_CREATE',
-  MsgActionTokenGetById: 'TOKEN_GET_BY_ID',
-  MsgActionTokenUpdate: 'TOKEN_UPDATE',
+  MsgActionTokenSaveByRealm: 'TOKEN_SAVE_BY_REALM',
+  MsgActionTokenGetByRealm: 'TOKEN_GET_BY_REALM',
 };
 
 /**
@@ -59,10 +61,8 @@ const userActions = {
   MsgActionUserGetById: 'USER_GET_BY_ID',
   MsgActionUserUpDate: 'USER_UPDATE',
   MsgActionUserDelete: 'USER_DELETE',
-  MsgActionUserCount: 'USER_COUNT',
-  MsgActionGetUserGroup: 'GET_USER_GROUP',
-  MsgActionAddUserToGroup: 'ADD_USER_TO_GROUP',
-  MsgActionDeleteUserFromGroup: 'DELETE_USER_FROM_GROUP',
+  MsgActionAddRolesToUser: 'ADD_ROLES_TO_USER',
+  MsgActionAddGroupsToUser: 'DELETE_GROUPS_TO_GROUP',
   MsgActionSetUpTemporaryPassword: 'SETUP_TEMPORARY_PASSWORD',
 };
 
@@ -72,10 +72,13 @@ const userActions = {
 const roleActions = {
   MsgActionRoleCreate: 'ROLE_CREATE',
   MsgActionRoleGetAll: 'ROLE_GET_ALL',
+  MsgActionRoleById: 'ROLE_GET_BY_ID',
+  MsgActionRoleUpdateById: 'ROLE_UPDATE_BY_ID',
   MsgActionRoleGetByName: 'ROLE_GET_BY_NAME',
   MsgActionRoleUpdateByName: 'ROLE_UPDATE_BY_NAME',
   MsgActionRoleDeleteByName: 'ROLE_DELETE_BY_NAME',
   MsgActionRoleUsersByRoleName: 'ROLE_USERS_BY_ROLE_NAME',
+  MsgActionRolePermissionsByRoleName: 'ROLE_PERMISSIONS_BY_ROLE_NAME',
 };
 
 /**
@@ -88,7 +91,27 @@ const groupActions = {
   MsgActionGroupUpdate: 'GROUP_UPDATE',
   MsgActionGroupDelete: 'GROUP_DELETE',
   MsgActionGroupCount: 'GROUP_COUNT',
-  MsgActionGroupMembers: 'GROUP_MEMBERS',
+  MsgActionGroupUsersByGroupName: 'GROUP_USERS_BY_GROUP_NAME',
+};
+
+/**
+ * @description PERMISSIONS ACTIONS
+ */
+const permissionActions = {
+  MsgActionPermissionCreate: 'PERMISSION_CREATE',
+  MsgActionPermissionGetAll: 'PERMISSION_GET_ALL',
+  MsgActionPermissionGetById: 'PERMISSION_GET_BY_ID',
+  MsgActionPermissionUpdate: 'PERMISSION_UPDATE',
+  MsgActionPermissionDelete: 'PERMISSION_DELETE',
+  MsgActionAddRolesToPermission: 'ADD_ROLES_TO_PERMISSION',
+};
+
+/**
+ * @description EMAILS ACTIONS
+ */
+const emailActions = {
+  MsgActionEmailSaveByRealm: 'EMAIL_SAVE_BY_REALM',
+  MsgActionPermissionGetByRealm: 'EMAIL_GET_BY_REALM',
 };
 
 const actions = {
@@ -99,6 +122,9 @@ const actions = {
   ...groupActions,
   ...keyActions,
   ...tokenActions,
+  ...permissionActions,
+  ...emailActions,
+  ...keyActions,
 };
 
 const ATTRIBUTE_TOKEN_KEY = 'X-Access-Token';
@@ -164,6 +190,8 @@ const GROUP_CONTROLLER = 'group-controller';
 const CLIENT_CONTROLLER = 'group-controller';
 const KEY_CONTROLLER = 'key-controller';
 const TOKEN_CONTROLLER = 'token-controller';
+const PERMISSION_CONTROLLER = 'permission-controller';
+const EMAIL_CONTROLLER = 'email-controller';
 
 const STRUCT_CONTROLLERS = {
   BASE_CONTROLLER,
@@ -175,6 +203,8 @@ const STRUCT_CONTROLLERS = {
   CLIENT_CONTROLLER,
   KEY_CONTROLLER,
   TOKEN_CONTROLLER,
+  PERMISSION_CONTROLLER,
+  EMAIL_CONTROLLER,
 };
 
 // orchestrators
@@ -185,6 +215,8 @@ const ROLE_ORCHESTRATOR = 'role-orchestrator';
 const GROUP_ORCHESTRATOR = 'group-orchestrator';
 const KEY_ORCHESTRATOR = 'key-orchestrator';
 const TOKEN_ORCHESTRATOR = 'token-orchestrator';
+const PERMISSION_ORCHESTRATOR = 'token-orchestrator';
+const EMAIL_ORCHESTRATOR = 'email-orchestrator';
 
 const STRUCT_ORCHESTRATORS = {
   ADMIN_ORCHESTRATOR,
@@ -194,6 +226,8 @@ const STRUCT_ORCHESTRATORS = {
   GROUP_ORCHESTRATOR,
   KEY_ORCHESTRATOR,
   TOKEN_ORCHESTRATOR,
+  PERMISSION_ORCHESTRATOR,
+  EMAIL_ORCHESTRATOR,
 };
 
 const REALM_CACHE = 'realm-cache';

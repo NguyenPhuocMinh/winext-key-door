@@ -6,6 +6,7 @@ const winext = require('winext');
 const logger = require('winext-logger');
 const bcrypt = winext.require('bcryptjs');
 const lodash = winext.require('lodash');
+const randomString = require('randomstring');
 const constants = require('../constants');
 const { assign } = lodash;
 
@@ -80,9 +81,18 @@ const GenerateSalt = () => {
   return salt;
 };
 
+const GenerateRandomString = () => {
+  return randomString.generate({
+    length: 20,
+    charset: 'hex',
+    capitalization: 'lowercase',
+  });
+};
+
 const generateUtils = {
   GenerateKeyPair,
   GenerateSalt,
+  GenerateRandomString,
 };
 
 module.exports = generateUtils;

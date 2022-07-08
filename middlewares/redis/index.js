@@ -12,7 +12,6 @@ const logUtils = logger.logUtils;
 const loggerFactory = logUtils.createLogger(constants.APP_NAME, constants.STRUCT_MIDDLEWARES.REDIS_MIDDLEWARE);
 
 const RedisMiddleware = (req, res, next) => {
-console.log("🚀 ~ file: index.js ~ line 15 ~ RedisMiddleware ~ req", req.route)
   try {
     // const redisMiddleware = [];
 

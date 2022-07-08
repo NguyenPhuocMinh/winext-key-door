@@ -7,16 +7,28 @@ const { RoleController } = require('../controllers');
  */
 const RoleRouter = [
   {
-    pathName: '/:realm/roles',
+    pathName: '/roles',
     method: 'POST',
     methodName: 'CreateRole',
     controller: RoleController.CreateRole,
   },
   {
-    pathName: '/:realm/roles',
+    pathName: '/roles',
     method: 'GET',
     methodName: 'GetAllRole',
     controller: RoleController.GetAllRole,
+  },
+  {
+    pathName: '/roles/:id',
+    method: 'GET',
+    methodName: 'GetRoleById',
+    controller: RoleController.GetRoleById,
+  },
+  {
+    pathName: '/roles/:id',
+    method: 'PUT',
+    methodName: 'UpdateRoleById',
+    controller: RoleController.UpdateRoleById,
   },
   {
     pathName: '/:realm/roles/:role-name',
@@ -37,10 +49,16 @@ const RoleRouter = [
     controller: RoleController.DeleteRoleByName,
   },
   {
-    pathName: '/:realm/roles/:role-name/users',
+    pathName: '/roles/:roleName/users',
     method: 'GET',
     methodName: 'GetUsersByRoleName',
     controller: RoleController.GetUsersByRoleName,
+  },
+  {
+    pathName: '/roles/:roleName/permissions',
+    method: 'GET',
+    methodName: 'GetPermissionsByRoleName',
+    controller: RoleController.GetPermissionsByRoleName,
   },
 ];
 
