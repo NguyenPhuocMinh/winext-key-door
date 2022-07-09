@@ -27,7 +27,7 @@ const sessionOptions = {
 };
 
 const sequelizeOptions = {
-  dialect: 'mysql',
+  dialect: 'postgres',
   pool: {
     max: 5,
     min: 0,

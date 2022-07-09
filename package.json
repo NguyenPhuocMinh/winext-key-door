@@ -22,6 +22,8 @@
     "helmet": "^5.1.0",
     "morgan": "^1.10.0",
     "mysql2": "^2.3.3",
+    "pg": "^8.7.3",
+    "pg-hstore": "^2.3.4",
     "randomstring": "^1.2.2",
     "redis": "^4.1.0",
     "sequelize": "^6.20.1",
